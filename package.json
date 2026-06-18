@@ -1,0 +1,18 @@
+{
+  "name": "space-economy-atlas",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "render:og": "node scripts/render-og-image.cjs",
+    "build": "node scripts/verify-static.mjs",
+    "vercel:build": "npm run build && node scripts/build-vercel.mjs",
+    "test": "node --test",
+    "verify:browser": "node scripts/verify-browser.cjs"
+  },
+  "dependencies": {
+    "three": "^0.165.0"
+  },
+  "devDependencies": {}
+}

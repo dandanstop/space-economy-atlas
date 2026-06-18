@@ -1,0 +1,8 @@
+.DS_Store
+artifacts
+test
+*.md
+SEO_AUDIT.md
+ANALYTICS.md
+CHANGELOG.md
+README.md
