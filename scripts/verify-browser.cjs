@@ -607,13 +607,24 @@ async function verifyMobile(browser, url, report) {
       throw new Error(`Expected mobile overview panel closed by default: ${JSON.stringify(mobileExplore)}.`);
     }
 
+    await page.locator(".audio-guide__select").selectOption("rocket");
+    await page.waitForTimeout(750);
+    const audioSyncedChapter = await page.evaluate(() => ({
+      activeChapter: document.querySelector(".chapter-button[aria-pressed='true']")?.textContent?.trim() ?? "",
+      selectValue: document.querySelector(".audio-guide__select")?.value ?? "",
+      scrollY: Math.round(window.scrollY)
+    }));
+    if (audioSyncedChapter.activeChapter !== "火箭" || audioSyncedChapter.selectValue !== "rocket") {
+      throw new Error(`Expected mobile audio playlist to sync visual chapter: ${JSON.stringify(audioSyncedChapter)}.`);
+    }
+
     await page.locator(".chapter-button[aria-pressed='true']").click();
     await page.waitForFunction(() => document.querySelector("#app")?.dataset.mobilePanel === "open", null, {
       timeout: 5000
     });
     const openedPanel = await collectUiState(page);
-    if (openedPanel.nodePanelTitle !== "發射站") {
-      throw new Error(`Expected mobile overview title 發射站, found "${openedPanel.nodePanelTitle}".`);
+    if (openedPanel.nodePanelTitle !== "火箭") {
+      throw new Error(`Expected mobile overview title 火箭, found "${openedPanel.nodePanelTitle}".`);
     }
 
     await page.getByRole("button", { name: "關閉資訊卡" }).click();

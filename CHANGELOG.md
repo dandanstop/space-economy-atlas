@@ -22,6 +22,7 @@ This project follows a maintenance-friendly format inspired by Keep a Changelog,
 - Simplified the UI visual system for future multilingual expansion by reducing all-caps labels, decorative letter spacing, bright active states, and heavy glass effects.
 - Confirmed English as the primary source language and changed content fallback helpers to return English when a localized language key is missing.
 - Replaced the always-visible `EN / 中文` switcher with a compact current-language dropdown that defaults to `EN` and opens on demand.
+- Fixed mobile audio playlist selection so changing a narration segment also moves the scroll-driven mobile chapter state and 3D focus to the matching node.
 - Updated content tests so private companies do not require tickers, while public companies still include them when available.
 
 ## [0.1.0] - 2026-06-19

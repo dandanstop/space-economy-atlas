@@ -43,7 +43,9 @@ let mobileStepObserver = null;
 const mobileLayoutQuery = window.matchMedia?.("(max-width: 920px)");
 const wheelStepCooldownMs = 620;
 const wheelStepThreshold = 36;
+const mobileAudioScrollSyncMs = 700;
 let lastWheelStepAt = 0;
+let mobileScrollObserverSuppressedUntil = 0;
 let audioSelectedNodeId = audioSummaries[0]?.nodeId ?? "launch-site";
 let audioStatus = "idle";
 let languageMenuOpen = false;
@@ -444,11 +446,28 @@ function toggleAudio() {
   startAudio();
 }
 
+function suppressMobileScrollObserver() {
+  mobileScrollObserverSuppressedUntil = performance.now() + mobileAudioScrollSyncMs;
+}
+
+function syncMobileScrollStepToNode(nodeId) {
+  if (!isMobileLayout()) return;
+
+  suppressMobileScrollObserver();
+  requestAnimationFrame(() => {
+    const step = [...elements.mobileScrollSteps.children].find((item) => item.dataset.node === nodeId);
+    if (!step) return;
+    window.scrollTo({ top: step.offsetTop, behavior: "auto" });
+  });
+}
+
 function syncVisualToAudioSegment(nodeId) {
   if (state.mode !== "explore") return false;
   if (!getNode(nodeId)) return false;
 
+  if (isMobileLayout()) suppressMobileScrollObserver();
   setState(setMode(selectNode(state, nodeId), "explore"));
+  syncMobileScrollStepToNode(nodeId);
   trackEvent("node_selected", getNodeTrackingParams(nodeId, "audio_playlist"));
   return true;
 }
@@ -789,6 +808,8 @@ function observeMobileSteps() {
 
   mobileStepObserver = new IntersectionObserver(
     (entries) => {
+      if (performance.now() < mobileScrollObserverSuppressedUntil) return;
+
       const visible = entries
         .filter((entry) => entry.isIntersecting)
         .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
