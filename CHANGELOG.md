@@ -4,6 +4,26 @@ All notable project changes are documented here so future editors, designers, an
 
 This project follows a maintenance-friendly format inspired by Keep a Changelog, with sections grouped by user-facing behavior and implementation area.
 
+## [Unreleased] - 2026-06-20
+
+### Changed
+
+- Raised `Future Signals` from an internal Deep dive subsection to its own Overview disclosure above company exploration.
+- Replaced `Public-company examples` with `Companies to Explore`, grouping official company links into private and public companies.
+- Expanded `Companies to Explore` with representative Chinese commercial space companies across launch, rockets, satellites, and downstream applications.
+- Removed the education-only investment warning from the visible company section because the section is now an industry-discovery resource, not an investment list.
+- Expanded `Why It Matters` with short educational intros and progressive `Expert Perspective` disclosures.
+- Added `Government Programs` under `Why It Matters`, linking to global official space programs from NASA, ESA, the EU, the UK, ISRO, JAXA, China Manned Space, and CNSA.
+- Added academic and research-institution links under `Research Notes`, including MIT, Stanford, Caltech, CU Boulder, LASP, and JAXA ISAS.
+- Expanded `How It Works` with short technical intros and progressive `Research Notes` disclosures, including NASA and orbital-compute research references.
+- Added a low-profile `Latest Signals` disclosure at the end of Overview, using a manually curated pilot issue filtered to the selected node.
+- Moved `Sources` to the bottom of `How It Works` so readers encounter explanation and research context before citation details.
+- Added a content automation and subscription roadmap for future latest-signal collection and newsletter development.
+- Simplified the UI visual system for future multilingual expansion by reducing all-caps labels, decorative letter spacing, bright active states, and heavy glass effects.
+- Confirmed English as the primary source language and changed content fallback helpers to return English when a localized language key is missing.
+- Replaced the always-visible `EN / 中文` switcher with a compact current-language dropdown that defaults to `EN` and opens on demand.
+- Updated content tests so private companies do not require tickers, while public companies still include them when available.
+
 ## [0.1.0] - 2026-06-19
 
 ### Added
@@ -33,6 +53,7 @@ This project follows a maintenance-friendly format inspired by Keep a Changelog,
 - Added a compact audio player with play, pause, resume, and playlist selection.
 - Added ElevenLabs audio generation script that outputs bilingual MP3 files to `assets/audio/`.
 - Changed the audio player from browser speech synthesis to fixed ElevenLabs MP3 playback.
+- Added audio playlist to 3D node synchronization in Explore Mode.
 - Added analytics events for audio playback, audio playlist selection, and company-example link clicks.
 - Added source notes in `src/data/content.js` for future editorial review.
 - Added a low-profile About link in the bottom-right corner for both desktop and mobile.

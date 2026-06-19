@@ -45,12 +45,17 @@ The page follows a progressive disclosure structure:
 - Hero: one clear science-education headline and short description.
 - Five navigation nodes: Launch Site, Rocket, Satellite, Space Station, Applications.
 - Overview cards: short summary first.
-- Detail tabs: Overview, Industry, Engineering.
+- Detail tabs: Overview, Why It Matters, How It Works.
 - Key numbers: concise numeric context for education.
 - Reality check: constraints and risks for each node.
+- Expert Perspective: collapsed learning cards under Why It Matters.
+- Government Programs: collapsed links to global public space programs under Why It Matters.
+- Research Notes: collapsed links to academic and research institutions under Why It Matters and How It Works.
 - Deep dive: collapsed by default for interested readers.
-- Public-company examples: collapsed by default for educational links to relevant listed companies and official investor/company pages.
-- Sources: collapsed by default with NASA, WEF, and SpaceX company-disclosure references.
+- Future Signals: collapsed by default and placed above company exploration to highlight forward-looking infrastructure, orbital compute, and space-native advantages.
+- Companies to Explore: collapsed by default, grouped into private and public companies with official website links.
+- Latest Signals: low-profile collapsed update log at the end of Overview, filtered to the selected node and curated manually before publication.
+- Sources: collapsed by default at the bottom of How It Works so general readers focus on the core explanation first.
 - Audio summary: compact bilingual playlist with five short spoken chapter summaries.
 - About: low-profile text link in the bottom-right corner, opening a modal dialog.
 
@@ -64,6 +69,14 @@ Current About content:
 ## Visual System
 
 The visual direction is a high-realism WebGL scene with restrained editorial UI.
+
+Multilingual design direction:
+
+- English is the primary source language and default fallback.
+- The header shows only the current language by default, starting with `EN`; clicking it opens the localized language menu.
+- UI typography should avoid all-caps, wide letter spacing, and fixed short-label assumptions so future languages can expand without layout breakage.
+- Navigation, tabs, disclosures, and panels should use neutral visual states that remain readable across different script systems.
+- Future languages should be added consistently across `languages`, `pageCopy`, node copy, `editorialLayers`, `latestSignals`, and `audioSummaries`.
 
 3D scene requirements:
 
@@ -119,12 +132,14 @@ Explore Mode:
 - Click and drag are separated by a movement threshold to avoid accidental node selection.
 - When a different object is selected, orbit rotation is reset so the new object starts from its intended editorial camera angle.
 - The audio summary player can play, pause, resume, and switch between the five fixed MP3 chapter files.
+- In Explore Mode, changing the audio playlist also selects the matching 3D node so the camera, active card, and narration stay synchronized.
 
 Object information:
 
 - Desktop shows the information panel on the right.
 - Mobile opens the information panel only when the user taps the bottom sticky node card.
-- Overview includes summary, key numbers, reality check, Deep dive, public-company examples, and Sources.
+- Overview includes summary, key numbers, reality check, Deep dive, Future Signals, Companies to Explore, and Latest Signals.
+- How It Works includes technical explanation, Research Notes, and Sources.
 - Industry and Engineering tabs provide compact bullet lists.
 
 About interaction:
@@ -225,7 +240,7 @@ Accessibility and semantics:
 - `src/interactions.js`: node registry, raycast selection, pointer click/drag handling.
 - `src/animations.js`: guided intro camera path and exploded-view offsets.
 - `src/state.js`: application state transitions.
-- `src/data/content.js`: bilingual copy, node metadata, editorial layers, source notes.
+- `src/data/content.js`: bilingual copy, node metadata, editorial layers, source notes, and the static `latestSignals` pilot issue.
 - `src/styles.css`: responsive layout, desktop/mobile UI, modal, panels, visual hierarchy.
 - `scripts/serve.mjs`: local development server.
 - `scripts/verify-static.mjs`: static structure verification.
@@ -242,6 +257,35 @@ Editorial inputs currently referenced by the site:
 - NASA Spaceships and Rockets: `https://www.nasa.gov/humans-in-space/spaceships-and-rockets/`
 - NASA Commercial Space: `https://www.nasa.gov/humans-in-space/commercial-space/`
 - NASA Low Earth Orbit Economy: `https://www.nasa.gov/humans-in-space/commercial-space/low-earth-orbit-economy/`
+- NASA Commercial Space Stations: `https://www.nasa.gov/humans-in-space/commercial-space/low-earth-orbit-economy/commercial-destinations-in-low-earth-orbit/`
+- NASA Artemis: `https://www.nasa.gov/humans-in-space/artemis/`
+- NASA In Space Production Applications: `https://www.nasa.gov/international-space-station/space-station-research-and-technology/in-space-production-applications/`
+- ESA Moonlight: `https://www.esa.int/Applications/Connectivity_and_Secure_Communications/Moonlight`
+- EU IRIS2: `https://defence-industry-space.ec.europa.eu/eu-space/iris2-secure-connectivity_en`
+- UK National Space Strategy: `https://www.gov.uk/government/publications/national-space-strategy`
+- ISRO Gaganyaan: `https://www.isro.gov.in/Gaganyaan.html`
+- JAXA Space Strategy Fund: `https://fund.jaxa.jp/`
+- JAXA Kibo: `https://global.jaxa.jp/projects/iss_human/kibo/`
+- JAXA H3 Launch Vehicle: `https://global.jaxa.jp/projects/sas/h3/`
+- China Manned Space Program: `https://en.cmse.gov.cn/aboutcms/`
+- China Space Station Science: `https://en.cmse.gov.cn/spacescience/spacescienceresearchandapplication/`
+- CNSA Space Programs: `https://www.cnsa.gov.cn/english/`
+- CNSA International Lunar Research Station: `https://www.cnsa.gov.cn/english/n6465652/n6465653/c6812150/content.html`
+- LandSpace: `https://www.landspace.com/`
+- Galactic Energy: `https://www.galactic-energy.cn/`
+- CAS Space: `https://www.cas-space.com/`
+- Space Pioneer: `https://www.spacepioneer.cc/`
+- Deep Blue Aerospace: `https://www.dbaspace.com/`
+- Commsat: `https://www.commsat.cn/`
+- Geespace: `https://www.geespace.com/`
+- MIT Space Systems Laboratory: `https://ssl.scripts.mit.edu/www/`
+- Stanford Space Rendezvous Laboratory: `https://slab.stanford.edu/`
+- Caltech Space Solar Power Project: `https://www.spacesolar.caltech.edu/`
+- CU Boulder Aerospace Research: `https://www.colorado.edu/aerospace/research`
+- CU Boulder Laboratory for Atmospheric and Space Physics: `https://lasp.colorado.edu/`
+- JAXA Institute of Space and Astronautical Science: `https://www.isas.jaxa.jp/en/`
+- Tether-Based Architecture for Solar-Powered Orbital AI Data Centers: `https://arxiv.org/abs/2512.09044`
+- Toward Communication-Efficient Space Data Centers: `https://arxiv.org/abs/2605.12681`
 - WEF Clear Orbit, Secure Future, 2026.
 - SpaceX company disclosure materials, June 2026.
 - FHILY / Three.js cinematic hero reference: `https://x.com/Oluwaphilemon1/status/2066394029076435318`

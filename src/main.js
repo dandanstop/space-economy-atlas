@@ -5,8 +5,9 @@ import {
   getEditorialLayer,
   getNode,
   languages,
+  latestSignals,
   nodes
-} from "./data/content.js?v=20260620-audio";
+} from "./data/content.js?v=20260620-latest-signals";
 import {
   createInitialState,
   selectNode,
@@ -45,6 +46,7 @@ const wheelStepThreshold = 36;
 let lastWheelStepAt = 0;
 let audioSelectedNodeId = audioSummaries[0]?.nodeId ?? "launch-site";
 let audioStatus = "idle";
+let languageMenuOpen = false;
 const audioElement = new Audio();
 audioElement.preload = "metadata";
 
@@ -149,6 +151,54 @@ function renderDeepDive(editorial) {
   return wrap;
 }
 
+function renderFutureSignals(editorial) {
+  const wrap = document.createElement("div");
+  wrap.className = "node-panel__future-signals";
+
+  for (const item of editorial?.futureSignals?.items ?? []) {
+    const text = document.createElement("p");
+    text.textContent = item;
+    wrap.append(text);
+  }
+
+  return wrap;
+}
+
+function renderLearningReferences(items, eventName) {
+  const list = document.createElement("ul");
+  list.className = "node-panel__learning-list";
+
+  for (const reference of items ?? []) {
+    const item = document.createElement("li");
+    item.className = "node-panel__learning-card";
+
+    const link = document.createElement("a");
+    link.href = reference.url;
+    link.target = "_blank";
+    link.rel = "noreferrer";
+    link.textContent = reference.title;
+    link.addEventListener("click", () => {
+      trackEvent(eventName, {
+        reference_title: reference.title,
+        node_id: state.selectedNode,
+        detail_layer: state.detailLayer,
+        language: state.lang
+      });
+    });
+
+    const source = document.createElement("small");
+    source.textContent = reference.source;
+
+    const takeaway = document.createElement("p");
+    takeaway.textContent = reference.takeaway;
+
+    item.append(link, source, takeaway);
+    list.append(item);
+  }
+
+  return list;
+}
+
 function renderSources(editorial) {
   const list = document.createElement("ul");
   list.className = "node-panel__source-list";
@@ -178,43 +228,136 @@ function renderSources(editorial) {
   return list;
 }
 
+function getLatestSignalsForNode(nodeId) {
+  return latestSignals.filter((signal) => signal.relatedNodeIds?.includes(nodeId)).slice(0, 3);
+}
+
+function renderLatestSignals(nodeId, copy) {
+  const wrap = document.createElement("div");
+  wrap.className = "node-panel__latest-signals";
+
+  const intro = document.createElement("p");
+  intro.className = "node-panel__latest-intro";
+  intro.textContent = copy.latestSignals.intro;
+  wrap.append(intro);
+
+  const signals = getLatestSignalsForNode(nodeId);
+  if (!signals.length) {
+    const empty = document.createElement("p");
+    empty.className = "node-panel__latest-empty";
+    empty.textContent = copy.latestSignals.empty;
+    wrap.append(empty);
+  }
+
+  const list = document.createElement("ul");
+  list.className = "node-panel__latest-list";
+
+  for (const signal of signals) {
+    const signalCopy = signal.copy?.[state.lang] ?? signal.copy?.en ?? signal.copy?.zh;
+    const item = document.createElement("li");
+    item.className = "node-panel__latest-item";
+
+    const meta = document.createElement("span");
+    meta.className = "node-panel__latest-meta";
+    meta.textContent = `${signal.curatedAt} / ${signal.sourceName}`;
+
+    const link = document.createElement("a");
+    link.href = signal.sourceUrl;
+    link.target = "_blank";
+    link.rel = "noreferrer";
+    link.textContent = signalCopy.title;
+    link.addEventListener("click", () => {
+      trackEvent("latest_signal_clicked", {
+        signal_id: signal.id,
+        source_name: signal.sourceName,
+        node_id: state.selectedNode,
+        language: state.lang
+      });
+    });
+
+    const summary = document.createElement("p");
+    summary.textContent = signalCopy.summary;
+
+    const takeaway = document.createElement("small");
+    takeaway.textContent = signalCopy.takeaway;
+
+    item.append(meta, link, summary, takeaway);
+    list.append(item);
+  }
+
+  if (signals.length) wrap.append(list);
+
+  const subscribe = document.createElement("a");
+  subscribe.className = "node-panel__latest-subscribe";
+  subscribe.href = copy.latestSignals.subscribeHref;
+  subscribe.textContent = copy.latestSignals.subscribe;
+  subscribe.addEventListener("click", () => {
+    trackEvent("latest_signals_subscribe_clicked", {
+      node_id: state.selectedNode,
+      language: state.lang
+    });
+  });
+  wrap.append(subscribe);
+
+  return wrap;
+}
+
 function renderCompanyExamples(editorial, copy) {
   const wrap = document.createElement("div");
   wrap.className = "node-panel__companies";
 
   const note = document.createElement("p");
   note.className = "node-panel__company-note";
-  note.textContent = copy.publicCompaniesNote;
+  note.textContent = copy.companyExplorer.intro;
 
-  const list = document.createElement("ul");
-  list.className = "node-panel__company-list";
+  wrap.append(note);
 
-  for (const company of editorial?.companyExamples ?? []) {
-    const item = document.createElement("li");
-    item.className = "node-panel__company";
+  for (const [status, label] of [
+    ["private", copy.companyExplorer.private],
+    ["public", copy.companyExplorer.public]
+  ]) {
+    const companies = (editorial?.companyExamples ?? []).filter((company) => company.status === status);
+    if (!companies.length) continue;
 
-    const link = document.createElement("a");
-    link.href = company.url;
-    link.target = "_blank";
-    link.rel = "noreferrer";
-    link.textContent = company.ticker ? `${company.name} (${company.ticker})` : company.name;
-    link.addEventListener("click", () => {
-      trackEvent("company_example_clicked", {
-        company_name: company.name,
-        ticker: company.ticker ?? "",
-        node_id: state.selectedNode,
-        language: state.lang
+    const group = document.createElement("section");
+    group.className = "node-panel__company-group";
+
+    const heading = document.createElement("h3");
+    heading.textContent = label;
+
+    const list = document.createElement("ul");
+    list.className = "node-panel__company-list";
+
+    for (const company of companies) {
+      const item = document.createElement("li");
+      item.className = "node-panel__company";
+
+      const link = document.createElement("a");
+      link.href = company.url;
+      link.target = "_blank";
+      link.rel = "noreferrer";
+      link.textContent = company.ticker ? `${company.name} (${company.ticker})` : company.name;
+      link.addEventListener("click", () => {
+        trackEvent("company_example_clicked", {
+          company_name: company.name,
+          company_status: company.status,
+          ticker: company.ticker ?? "",
+          node_id: state.selectedNode,
+          language: state.lang
+        });
       });
-    });
 
-    const role = document.createElement("p");
-    role.textContent = company.role;
+      const role = document.createElement("p");
+      role.textContent = company.role;
 
-    item.append(link, role);
-    list.append(item);
+      item.append(link, role);
+      list.append(item);
+    }
+
+    group.append(heading, list);
+    wrap.append(group);
   }
 
-  wrap.append(note, list);
   return wrap;
 }
 
@@ -301,12 +444,29 @@ function toggleAudio() {
   startAudio();
 }
 
+function syncVisualToAudioSegment(nodeId) {
+  if (state.mode !== "explore") return false;
+  if (!getNode(nodeId)) return false;
+
+  setState(setMode(selectNode(state, nodeId), "explore"));
+  trackEvent("node_selected", getNodeTrackingParams(nodeId, "audio_playlist"));
+  return true;
+}
+
 function selectAudioSegment(nodeId) {
   const shouldContinue = audioStatus === "playing";
   resetAudio({ renderGuide: false });
   audioSelectedNodeId = nodeId;
-  renderAudioGuide(getCopy(state.lang));
-  trackEvent("audio_segment_selected", getAudioTrackingParams("segment_selected"));
+
+  const visualSynced = syncVisualToAudioSegment(nodeId);
+  if (!visualSynced) {
+    renderAudioGuide(getCopy(state.lang));
+  }
+
+  trackEvent("audio_segment_selected", {
+    ...getAudioTrackingParams("segment_selected"),
+    visual_sync: visualSynced
+  });
   if (shouldContinue) startAudio();
 }
 
@@ -390,26 +550,58 @@ function openMobileNodePanel(nodeId, interactionType = "mobile_sticky_card") {
 }
 
 function renderLanguages() {
-  elements.languageToggle.replaceChildren(
-    ...languages.map((language) =>
-      createButton({
-        className: "language-button",
-        text: language.label,
-        pressed: state.lang === language.id,
-        onClick: () => {
-          if (state.lang !== language.id) {
-            resetAudio({ renderGuide: false });
-            trackEvent("language_selected", {
-              language: language.id,
-              previous_language: state.lang,
-              label: language.label
-            });
-          }
+  const currentLanguage = languages.find((language) => language.id === state.lang) ?? languages[0];
+  const trigger = createButton({
+    className: "language-menu__trigger",
+    text: currentLanguage.label,
+    onClick: (event) => {
+      event.stopPropagation();
+      languageMenuOpen = !languageMenuOpen;
+      renderLanguages();
+    }
+  });
+  trigger.id = "language-menu-trigger";
+  trigger.setAttribute("aria-label", `Language: ${currentLanguage.label}`);
+  trigger.setAttribute("aria-haspopup", "menu");
+  trigger.setAttribute("aria-expanded", String(languageMenuOpen));
+  trigger.setAttribute("aria-controls", "language-menu");
+
+  const menu = document.createElement("div");
+  menu.id = "language-menu";
+  menu.className = "language-menu";
+  menu.setAttribute("role", "menu");
+  menu.hidden = !languageMenuOpen;
+
+  for (const language of languages) {
+    const option = createButton({
+      className: "language-menu__option",
+      text: language.label,
+      dataset: { lang: language.id },
+      onClick: (event) => {
+        event.stopPropagation();
+        if (state.lang !== language.id) {
+          resetAudio({ renderGuide: false });
+          trackEvent("language_selected", {
+            language: language.id,
+            previous_language: state.lang,
+            label: language.label
+          });
+          languageMenuOpen = false;
           setState(setLanguage(state, language.id));
+          return;
         }
-      })
-    )
-  );
+
+        languageMenuOpen = false;
+        renderLanguages();
+      }
+    });
+    option.setAttribute("role", "menuitemradio");
+    option.setAttribute("aria-checked", String(state.lang === language.id));
+    menu.append(option);
+  }
+
+  elements.languageToggle.dataset.open = String(languageMenuOpen);
+  elements.languageToggle.replaceChildren(trigger, menu);
 }
 
 function renderBrand(copy) {
@@ -631,6 +823,57 @@ function renderMobileScrollSteps() {
   observeMobileSteps();
 }
 
+function renderLearningLayer(nodeCopy, editorial, copy) {
+  const body = document.createElement("div");
+  body.className = "node-panel__body";
+  const learning = editorial?.learningLayers?.[state.detailLayer];
+
+  if (learning?.intro) {
+    const intro = document.createElement("p");
+    intro.className = "node-panel__layer-intro";
+    intro.textContent = learning.intro;
+    body.append(intro);
+  }
+
+  const list = document.createElement("ul");
+  for (const item of nodeCopy[state.detailLayer]) {
+    const listItem = document.createElement("li");
+    listItem.textContent = item;
+    list.append(listItem);
+  }
+  body.append(list);
+
+  if (learning?.perspectives?.length) {
+    body.append(
+      renderDisclosure(
+        copy.expertPerspective,
+        renderLearningReferences(learning.perspectives, "expert_perspective_clicked")
+      )
+    );
+  }
+
+  if (learning?.governmentPrograms?.length) {
+    body.append(
+      renderDisclosure(
+        copy.governmentPrograms,
+        renderLearningReferences(learning.governmentPrograms, "government_program_clicked")
+      )
+    );
+  }
+
+  if (learning?.research?.length) {
+    body.append(
+      renderDisclosure(copy.researchNotes, renderLearningReferences(learning.research, "research_note_clicked"))
+    );
+  }
+
+  if (state.detailLayer === "engineering" && editorial?.sources?.length) {
+    body.append(renderDisclosure(copy.sources, renderSources(editorial), "node-panel__disclosure--sources"));
+  }
+
+  return body;
+}
+
 function renderDetailBody(nodeCopy, editorial, copy) {
   const body = document.createElement("div");
   body.className = "node-panel__body";
@@ -652,26 +895,28 @@ function renderDetailBody(nodeCopy, editorial, copy) {
       body.append(renderDisclosure(copy.deepDive, renderDeepDive(editorial)));
     }
 
-    if (editorial?.companyExamples?.length) {
-      body.append(renderDisclosure(copy.publicCompanies, renderCompanyExamples(editorial, copy)));
+    if (editorial?.futureSignals?.items?.length) {
+      body.append(renderDisclosure(copy.futureSignals, renderFutureSignals(editorial)));
     }
 
-    if (editorial?.sources?.length) {
-      body.append(renderDisclosure(copy.sources, renderSources(editorial), "node-panel__disclosure--sources"));
+    if (editorial?.companyExamples?.length) {
+      body.append(renderDisclosure(copy.companyExplorer.title, renderCompanyExamples(editorial, copy)));
+    }
+
+    if (latestSignals.length) {
+      body.append(
+        renderDisclosure(
+          copy.latestSignals.title,
+          renderLatestSignals(state.selectedNode, copy),
+          "node-panel__disclosure--latest"
+        )
+      );
     }
 
     return body;
   }
 
-  const list = document.createElement("ul");
-  for (const item of nodeCopy[state.detailLayer]) {
-    const listItem = document.createElement("li");
-    listItem.textContent = item;
-    list.append(listItem);
-  }
-
-  body.append(list);
-  return body;
+  return renderLearningLayer(nodeCopy, editorial, copy);
 }
 
 function renderNodePanel(copy) {
@@ -788,6 +1033,17 @@ function onWebGLUnavailable() {
 
 render();
 elements.app.addEventListener("wheel", handleDesktopWheel, { passive: false });
+document.addEventListener("click", (event) => {
+  if (!languageMenuOpen || event.target?.closest?.("#language-toggle")) return;
+  languageMenuOpen = false;
+  renderLanguages();
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape" || !languageMenuOpen) return;
+  languageMenuOpen = false;
+  renderLanguages();
+  document.querySelector("#language-menu-trigger")?.focus();
+});
 audioElement.addEventListener("ended", () => {
   audioStatus = "idle";
   renderAudioGuide(getCopy(state.lang));

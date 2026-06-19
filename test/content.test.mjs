@@ -10,6 +10,7 @@ import {
   getEditorialLayer,
   getNode,
   labelForValueChain,
+  latestSignals,
   languages,
   nodes,
   pageCopy,
@@ -22,6 +23,13 @@ test("content exposes Chinese and English languages", () => {
     languages.map((language) => language.id),
     ["en", "zh"]
   );
+});
+
+test("English remains the primary fallback language", () => {
+  assert.equal(languages[0].id, "en");
+  assert.equal(getCopy("missing-language").brand, pageCopy.en.brand);
+  assert.equal(labelForValueChain(valueChain[0], "missing-language"), valueChain[0].en);
+  assert.equal(getEditorialLayer("launch-site", "missing-language"), editorialLayers["launch-site"].en);
 });
 
 test("all MVP nodes have three content layers in both languages", () => {
@@ -75,13 +83,67 @@ test("all configured languages are available in page and node copy", () => {
     assert.ok(pageCopy[id].detailTabs.overview);
     assert.ok(pageCopy[id].keyNumbers);
     assert.ok(pageCopy[id].deepDive);
+    assert.ok(pageCopy[id].futureSignals);
+    assert.ok(pageCopy[id].companyExplorer.title);
+    assert.ok(pageCopy[id].companyExplorer.intro);
+    assert.ok(pageCopy[id].companyExplorer.private);
+    assert.ok(pageCopy[id].companyExplorer.public);
+    assert.ok(pageCopy[id].expertPerspective);
+    assert.ok(pageCopy[id].governmentPrograms);
+    assert.ok(pageCopy[id].researchNotes);
     assert.ok(pageCopy[id].sources);
+    assert.ok(pageCopy[id].latestSignals.title);
+    assert.ok(pageCopy[id].latestSignals.intro);
+    assert.ok(pageCopy[id].latestSignals.subscribe);
+    assert.ok(pageCopy[id].latestSignals.subscribeHref.startsWith("mailto:"));
 
     for (const node of nodes) {
       assert.ok(node.copy[id]);
       assert.ok(editorialLayers[node.id][id]);
     }
   }
+});
+
+test("latest signals provide a low-profile curated update layer", () => {
+  assert.ok(latestSignals.length >= 5);
+  assert.ok(latestSignals.length <= 8);
+
+  for (const signal of latestSignals) {
+    assert.ok(signal.id.length > 8);
+    assert.match(signal.curatedAt, /^\d{4}-\d{2}-\d{2}$/);
+    assert.ok(["program", "research", "company"].includes(signal.status));
+    assert.ok(signal.sourceName.length >= 3);
+    assert.equal(new URL(signal.sourceUrl).protocol, "https:");
+    assert.ok(signal.topics.length >= 1);
+    assert.ok(signal.relatedNodeIds.length >= 1);
+
+    for (const nodeId of signal.relatedNodeIds) {
+      assert.ok(getNode(nodeId), `${signal.id} references missing node ${nodeId}`);
+    }
+
+    for (const { id: lang } of languages) {
+      const copy = signal.copy[lang];
+      assert.ok(copy.title.length >= (lang === "zh" ? 16 : 40));
+      assert.ok(copy.summary.length >= (lang === "zh" ? 28 : 80));
+      assert.ok(copy.takeaway.length >= (lang === "zh" ? 24 : 70));
+    }
+  }
+
+  for (const chapter of chapters) {
+    assert.ok(
+      latestSignals.some((signal) => signal.relatedNodeIds.includes(chapter.nodeId)),
+      `${chapter.nodeId} should have at least one related latest signal`
+    );
+  }
+});
+
+test("detail tabs use educational reader-facing labels", () => {
+  assert.equal(pageCopy.en.detailTabs.overview, "Overview");
+  assert.equal(pageCopy.en.detailTabs.industry, "Why It Matters");
+  assert.equal(pageCopy.en.detailTabs.engineering, "How It Works");
+  assert.equal(pageCopy.zh.detailTabs.overview, "摘要");
+  assert.equal(pageCopy.zh.detailTabs.industry, "為何重要");
+  assert.equal(pageCopy.zh.detailTabs.engineering, "如何運作");
 });
 
 test("chapters and value chain represent the approved structure", () => {
@@ -140,15 +202,125 @@ test("primary chapters include company examples for educational deep dives", () 
   for (const chapter of chapters) {
     for (const { id: lang } of languages) {
       const editorial = getEditorialLayer(chapter.nodeId, lang);
-      assert.ok(editorial.companyExamples.length >= 2, `${chapter.nodeId} missing ${lang} company examples`);
+      assert.ok(editorial.companyExamples.length >= 4, `${chapter.nodeId} missing ${lang} company examples`);
+      assert.ok(
+        editorial.companyExamples.some((company) => company.status === "private"),
+        `${chapter.nodeId} missing ${lang} private company examples`
+      );
+      assert.ok(
+        editorial.companyExamples.some((company) => company.status === "public"),
+        `${chapter.nodeId} missing ${lang} public company examples`
+      );
       for (const company of editorial.companyExamples) {
         assert.ok(company.name.length > 2);
-        assert.ok(company.ticker.length >= 2);
+        assert.ok(["private", "public"].includes(company.status));
+        if (company.status === "public") {
+          assert.ok(company.ticker.length >= 2);
+        } else {
+          assert.equal(company.ticker, undefined);
+        }
         assert.ok(company.role.length > 20);
         const url = new URL(company.url);
         assert.equal(url.protocol, "https:");
       }
     }
+  }
+});
+
+test("company examples include representative Chinese commercial space companies", () => {
+  for (const { id: lang } of languages) {
+    const urls = chapters.flatMap((chapter) => {
+      const editorial = getEditorialLayer(chapter.nodeId, lang);
+      return editorial.companyExamples.map((company) => company.url);
+    });
+
+    for (const expectedUrl of [
+      "https://www.landspace.com/",
+      "https://www.galactic-energy.cn/",
+      "https://www.cas-space.com/",
+      "https://www.spacepioneer.cc/",
+      "https://www.dbaspace.com/",
+      "https://www.commsat.cn/",
+      "https://www.geespace.com/"
+    ]) {
+      assert.ok(urls.includes(expectedUrl), `${lang} company examples should include ${expectedUrl}`);
+    }
+  }
+});
+
+test("primary chapters include future signals for emerging space-economy opportunities", () => {
+  for (const chapter of chapters) {
+    for (const { id: lang } of languages) {
+      const editorial = getEditorialLayer(chapter.nodeId, lang);
+      assert.ok(editorial.futureSignals, `${chapter.nodeId} missing ${lang} future signals`);
+      assert.ok(editorial.futureSignals.title.length >= 4);
+      assert.ok(editorial.futureSignals.items.length >= 2);
+      for (const item of editorial.futureSignals.items) {
+        assert.ok(item.length >= (lang === "zh" ? 20 : 60));
+      }
+    }
+  }
+});
+
+test("primary chapters include progressive educational layers", () => {
+  for (const chapter of chapters) {
+    for (const { id: lang } of languages) {
+      const editorial = getEditorialLayer(chapter.nodeId, lang);
+      const industry = editorial.learningLayers?.industry;
+      const engineering = editorial.learningLayers?.engineering;
+
+      assert.ok(industry?.intro.length >= (lang === "zh" ? 28 : 80), `${chapter.nodeId} missing ${lang} why intro`);
+      assert.ok(
+        industry.perspectives?.length >= 1,
+        `${chapter.nodeId} missing ${lang} expert perspective`
+      );
+      assert.ok(
+        industry.governmentPrograms?.length >= 3,
+        `${chapter.nodeId} missing ${lang} government programs`
+      );
+      assert.ok(industry.research?.length >= 3, `${chapter.nodeId} missing ${lang} academic research programs`);
+      assert.ok(
+        engineering?.intro.length >= (lang === "zh" ? 28 : 80),
+        `${chapter.nodeId} missing ${lang} how intro`
+      );
+      assert.ok(engineering.research?.length >= 1, `${chapter.nodeId} missing ${lang} research notes`);
+
+      for (const reference of [
+        ...industry.perspectives,
+        ...industry.governmentPrograms,
+        ...industry.research,
+        ...engineering.research
+      ]) {
+        assert.ok(reference.title.length > 6);
+        assert.ok(reference.source.length >= 3);
+        assert.ok(reference.takeaway.length >= (lang === "zh" ? 28 : 80));
+        const url = new URL(reference.url);
+        assert.equal(url.protocol, "https:");
+      }
+    }
+  }
+});
+
+test("government program references include China and Japan policy sources", () => {
+  for (const { id: lang } of languages) {
+    const references = chapters.flatMap((chapter) => {
+      const editorial = getEditorialLayer(chapter.nodeId, lang);
+      return editorial.learningLayers?.industry?.governmentPrograms ?? [];
+    });
+    const urls = references.map((reference) => reference.url);
+
+    assert.ok(
+      urls.some((url) => url.includes("fund.jaxa.jp")),
+      `${lang} government programs should include Japan's Space Strategy Fund`
+    );
+    assert.ok(
+      urls.some((url) => url.includes("en.cmse.gov.cn")),
+      `${lang} government programs should include China Manned Space sources`
+    );
+    assert.ok(
+      urls.some((url) => url.includes("cnsa.gov.cn")),
+      `${lang} government programs should include CNSA sources`
+    );
   }
 });
 
@@ -186,4 +358,5 @@ test("public-facing content avoids direct document-title wording", () => {
 
   assert.equal(new RegExp("prospec" + "tus", "i").test(publicContent), false);
   assert.equal(new RegExp("SpaceX " + "EU", "i").test(publicContent), false);
+  assert.equal(/For education only, not investment advice/i.test(publicContent), false);
 });

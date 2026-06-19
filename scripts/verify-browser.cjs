@@ -421,7 +421,8 @@ async function verifyDesktop(browser, url, report) {
     await page.getByRole("button", { name: "Close about" }).click();
     await page.waitForFunction(() => !document.querySelector("#about-dialog")?.open, null, { timeout: 5000 });
 
-    await page.getByRole("button", { name: "中文" }).click();
+    await page.getByRole("button", { name: "Language: EN" }).click();
+    await page.locator(".language-menu__option[data-lang='zh']").click();
     await page.waitForFunction(() => document.querySelector(".brand")?.textContent?.trim() === "太空經濟地圖", null, {
       timeout: 5000
     });
@@ -429,7 +430,8 @@ async function verifyDesktop(browser, url, report) {
     if (localized.lang !== "zh-Hant") throw new Error(`Expected zh-Hant document language, found "${localized.lang}".`);
     if (localized.aboutLink !== "關於") throw new Error(`Expected Chinese about link, found "${localized.aboutLink}".`);
 
-    await page.getByRole("button", { name: "EN" }).click();
+    await page.getByRole("button", { name: "Language: 中文" }).click();
+    await page.locator(".language-menu__option[data-lang='en']").click();
     await page.waitForFunction(() => document.querySelector(".brand")?.textContent?.trim() === "Space Economy Atlas", null, {
       timeout: 5000
     });
@@ -544,7 +546,8 @@ async function verifyMobile(browser, url, report) {
       throw new Error("Mobile page emitted errors.");
     }
 
-    await page.getByRole("button", { name: "中文" }).click();
+    await page.getByRole("button", { name: "Language: EN" }).click();
+    await page.locator(".language-menu__option[data-lang='zh']").click();
     await page.waitForFunction(() => document.querySelector(".brand")?.textContent?.trim() === "太空經濟地圖", null, {
       timeout: 5000
     });
