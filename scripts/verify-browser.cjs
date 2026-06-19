@@ -293,6 +293,29 @@ async function collectUiState(page) {
   });
 }
 
+async function selectAudioAndAssertSync(page, { option, expectedChapter, expectedPanel = expectedChapter, label, expectScroll = false }) {
+  await page.locator(".audio-guide__select").selectOption(option);
+  await page.waitForTimeout(850);
+
+  const state = await page.evaluate(() => ({
+    activeChapter: document.querySelector(".chapter-button[aria-pressed='true']")?.textContent?.trim() ?? "",
+    panelTitle: document.querySelector("#node-panel h2")?.textContent?.trim() ?? "",
+    selectValue: document.querySelector(".audio-guide__select")?.value ?? "",
+    scrollY: Math.round(window.scrollY)
+  }));
+
+  if (
+    state.activeChapter !== expectedChapter ||
+    state.panelTitle !== expectedPanel ||
+    state.selectValue !== option ||
+    (expectScroll && state.scrollY <= 0)
+  ) {
+    throw new Error(`Expected ${label} audio playlist to sync visual chapter: ${JSON.stringify(state)}.`);
+  }
+
+  return state;
+}
+
 async function verifyDesktop(browser, url, report) {
   const context = await browser.newContext({
     viewport: { width: 1440, height: 960 },
@@ -460,6 +483,12 @@ async function verifyDesktop(browser, url, report) {
     });
     await page.waitForTimeout(400);
 
+    await selectAudioAndAssertSync(page, {
+      option: "satellite",
+      expectedChapter: "Satellite",
+      label: "desktop"
+    });
+
     const after = await collectUiState(page);
     const canvas = await readCanvasMetrics(page);
     assertUsableCanvas(canvas, "desktop");
@@ -607,16 +636,12 @@ async function verifyMobile(browser, url, report) {
       throw new Error(`Expected mobile overview panel closed by default: ${JSON.stringify(mobileExplore)}.`);
     }
 
-    await page.locator(".audio-guide__select").selectOption("rocket");
-    await page.waitForTimeout(750);
-    const audioSyncedChapter = await page.evaluate(() => ({
-      activeChapter: document.querySelector(".chapter-button[aria-pressed='true']")?.textContent?.trim() ?? "",
-      selectValue: document.querySelector(".audio-guide__select")?.value ?? "",
-      scrollY: Math.round(window.scrollY)
-    }));
-    if (audioSyncedChapter.activeChapter !== "火箭" || audioSyncedChapter.selectValue !== "rocket") {
-      throw new Error(`Expected mobile audio playlist to sync visual chapter: ${JSON.stringify(audioSyncedChapter)}.`);
-    }
+    const audioSyncedChapter = await selectAudioAndAssertSync(page, {
+      option: "rocket",
+      expectedChapter: "火箭",
+      label: "mobile",
+      expectScroll: true
+    });
 
     await page.locator(".chapter-button[aria-pressed='true']").click();
     await page.waitForFunction(() => document.querySelector("#app")?.dataset.mobilePanel === "open", null, {
@@ -649,12 +674,110 @@ async function verifyMobile(browser, url, report) {
       overflow,
       localized,
       localizedOverflow,
+      audioSyncedChapter,
       canvas,
       screenshot,
       ...diagnostics
     };
   } catch (error) {
     report.mobile = {
+      success: false,
+      error: error.message,
+      ...diagnostics
+    };
+    throw error;
+  } finally {
+    await context.close();
+  }
+}
+
+async function verifyTablet(browser, url, report) {
+  const context = await browser.newContext({
+    viewport: { width: 820, height: 1180 },
+    deviceScaleFactor: 2,
+    isMobile: true,
+    hasTouch: true
+  });
+  const page = await context.newPage();
+  const diagnostics = { pageErrors: [], consoleErrors: [] };
+  attachPageDiagnostics(page, diagnostics);
+
+  try {
+    await page.goto(url, { waitUntil: "load", timeout: 15000 });
+    await page.waitForSelector(".top-bar", { state: "visible", timeout: 10000 });
+    await page.waitForSelector(".hero-action--primary", { state: "visible", timeout: 10000 });
+    await page.waitForTimeout(700);
+
+    await page.locator(".hero-action--primary").click();
+    await page.waitForFunction(() => document.querySelector("#app")?.dataset.mode === "explore", null, {
+      timeout: 5000
+    });
+    await page.waitForTimeout(500);
+
+    const tabletExplore = await page.evaluate(() => {
+      const visibleChapterButtons = [...document.querySelectorAll(".chapter-button")]
+        .filter((button) => {
+          const rect = button.getBoundingClientRect();
+          return rect.width > 0 && rect.height > 0 && getComputedStyle(button).display !== "none";
+        })
+        .map((button) => button.textContent.trim());
+      const panel = document.querySelector("#node-panel");
+      const panelRect = panel?.getBoundingClientRect();
+      return {
+        mode: document.querySelector("#app")?.dataset.mode ?? null,
+        mobilePanel: document.querySelector("#app")?.dataset.mobilePanel ?? null,
+        visibleChapterButtons,
+        panelVisible: Boolean(panelRect && panelRect.width > 0 && panelRect.height > 0 && getComputedStyle(panel).display !== "none"),
+        stepCount: document.querySelectorAll(".mobile-scroll-step").length
+      };
+    });
+
+    if (tabletExplore.mode !== "explore") throw new Error(`Expected tablet explore mode, got "${tabletExplore.mode}".`);
+    if (tabletExplore.stepCount !== 5) throw new Error(`Expected 5 tablet scroll steps, found ${tabletExplore.stepCount}.`);
+    if (tabletExplore.visibleChapterButtons.length !== 1 || tabletExplore.visibleChapterButtons[0] !== "Launch Site") {
+      throw new Error(`Expected one tablet sticky chapter, got ${JSON.stringify(tabletExplore.visibleChapterButtons)}.`);
+    }
+    if (tabletExplore.mobilePanel !== "closed" || tabletExplore.panelVisible) {
+      throw new Error(`Expected tablet overview panel closed by default: ${JSON.stringify(tabletExplore)}.`);
+    }
+
+    const audioSyncedChapter = await selectAudioAndAssertSync(page, {
+      option: "ground-station",
+      expectedChapter: "Space Station",
+      label: "tablet",
+      expectScroll: true
+    });
+
+    await page.locator(".chapter-button[aria-pressed='true']").click();
+    await page.waitForFunction(() => document.querySelector("#app")?.dataset.mobilePanel === "open", null, {
+      timeout: 5000
+    });
+    const openedPanel = await collectUiState(page);
+    if (openedPanel.nodePanelTitle !== "Space Station") {
+      throw new Error(`Expected tablet overview title Space Station, found "${openedPanel.nodePanelTitle}".`);
+    }
+
+    const canvas = await readCanvasMetrics(page);
+    assertUsableCanvas(canvas, "tablet");
+
+    if (diagnostics.pageErrors.length || diagnostics.consoleErrors.length) {
+      throw new Error("Tablet page emitted errors.");
+    }
+
+    const screenshot = path.join(artifactsDir, "tablet.png");
+    await page.screenshot({ path: screenshot, fullPage: false });
+
+    report.tablet = {
+      success: true,
+      tabletExplore,
+      audioSyncedChapter,
+      openedPanel,
+      canvas,
+      screenshot,
+      ...diagnostics
+    };
+  } catch (error) {
+    report.tablet = {
       success: false,
       error: error.message,
       ...diagnostics
@@ -754,6 +877,7 @@ async function main() {
     server: null,
     desktop: null,
     mobile: null,
+    tablet: null,
     fallback: null
   };
 
@@ -776,6 +900,7 @@ async function main() {
     browser = await launchChromium(playwright.chromium);
     await verifyDesktop(browser, url, report);
     await verifyMobile(browser, url, report);
+    await verifyTablet(browser, url, report);
     await verifyFallback(browser, fallbackUrl, report, nodes.length);
 
     report.success = true;
