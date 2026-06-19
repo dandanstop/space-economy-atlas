@@ -7,7 +7,7 @@ import {
   languages,
   latestSignals,
   nodes
-} from "./data/content.js?v=20260620-latest-signals";
+} from "./data/content.js?v=20260620-multilingual-signals";
 import {
   createInitialState,
   selectNode,
