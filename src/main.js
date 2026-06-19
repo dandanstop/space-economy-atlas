@@ -6,7 +6,7 @@ import {
   getNode,
   languages,
   nodes
-} from "./data/content.js";
+} from "./data/content.js?v=20260620-audio";
 import {
   createInitialState,
   selectNode,
