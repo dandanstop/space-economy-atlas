@@ -345,13 +345,20 @@ p {
   right: 0;
   left: 0;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 0;
+  grid-template-columns: minmax(0, 1fr) minmax(248px, 312px);
+  gap: 12px;
+  align-items: stretch;
   width: auto;
   padding: 0 max(20px, env(safe-area-inset-right)) 0 max(20px, env(safe-area-inset-left));
   border-bottom: 1px solid var(--line);
   background: rgba(2, 5, 10, 0.48);
   backdrop-filter: blur(18px);
+}
+
+.chapter-rail__buttons {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  min-width: 0;
 }
 
 .chapter-button {
@@ -401,6 +408,71 @@ p {
   background: var(--cyan);
   box-shadow: 0 0 18px rgba(91, 213, 255, 0.5);
   transform: scaleX(1);
+}
+
+.audio-guide {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 46px;
+  padding-left: 12px;
+  border-left: 1px solid rgba(205, 231, 239, 0.14);
+}
+
+.audio-guide__label {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.audio-guide__controls {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr);
+  gap: 6px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.audio-guide__button {
+  min-height: 32px;
+  padding: 0 8px;
+  border-color: rgba(91, 213, 255, 0.24);
+  color: #031015;
+  background: var(--cyan);
+  font-size: 12px;
+  font-weight: 760;
+}
+
+.audio-guide__button:hover:not(:disabled),
+.audio-guide__button:focus-visible {
+  background: #8ce3ff;
+}
+
+.audio-guide__select {
+  min-width: 0;
+  width: 100%;
+  min-height: 32px;
+  padding: 0 28px 0 10px;
+  border: 1px solid rgba(205, 231, 239, 0.16);
+  border-radius: var(--radius);
+  color: #dce9eb;
+  background: rgba(255, 255, 255, 0.05);
+  font: inherit;
+  font-size: 12px;
+}
+
+.audio-guide__select option {
+  color: #031015;
+}
+
+.audio-guide__status {
+  display: none;
 }
 
 .node-panel {
@@ -558,6 +630,55 @@ p {
   margin-bottom: 0;
 }
 
+.node-panel__companies {
+  display: grid;
+  gap: 10px;
+}
+
+.node-panel__company-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.48;
+}
+
+.node-panel__company-list {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.node-panel__company {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid rgba(91, 213, 255, 0.14);
+  border-radius: 6px;
+  background: rgba(91, 213, 255, 0.06);
+}
+
+.node-panel__company a {
+  color: #dce9eb;
+  font-size: 13px;
+  font-weight: 760;
+  text-decoration: none;
+}
+
+.node-panel__company a:hover {
+  color: var(--cyan);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.node-panel__company p {
+  margin: 0;
+  color: rgba(215, 229, 232, 0.82);
+  font-size: 12px;
+  line-height: 1.48;
+}
+
 .node-panel__source-list {
   display: grid;
   gap: 10px;
@@ -711,7 +832,20 @@ p {
     right: 0;
     left: 0;
     gap: 6px;
+    grid-template-columns: minmax(0, 1fr) minmax(206px, 246px);
     padding-inline: 16px;
+  }
+
+  .audio-guide {
+    padding-left: 8px;
+  }
+
+  .audio-guide__label {
+    display: none;
+  }
+
+  .audio-guide__controls {
+    grid-template-columns: 62px minmax(0, 1fr);
   }
 
   .chapter-button {
@@ -826,6 +960,45 @@ p {
     border-bottom: 0;
     background: transparent;
     backdrop-filter: none;
+  }
+
+  .chapter-rail__buttons {
+    display: block;
+  }
+
+  .audio-guide {
+    position: fixed;
+    top: 72px;
+    right: 16px;
+    left: 16px;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 6px 10px;
+    min-height: 44px;
+    padding: 6px;
+    border: 1px solid rgba(205, 231, 239, 0.14);
+    border-radius: var(--radius);
+    background: rgba(5, 11, 17, 0.68);
+    backdrop-filter: blur(18px);
+  }
+
+  .audio-guide__label {
+    display: inline-flex;
+    align-items: center;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+  }
+
+  .audio-guide__controls {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .audio-guide__button,
+  .audio-guide__select {
+    min-height: 31px;
+    font-size: 12px;
   }
 
   .chapter-button {

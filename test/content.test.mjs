@@ -1,6 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { access } from "node:fs/promises";
 import {
+  audioSummaries,
   chapters,
   editorialLayers,
   getChapter,
@@ -128,8 +130,60 @@ test("editorial source links are valid when present", () => {
 });
 
 test("source notes include required provenance references", () => {
-  assert.ok(sourceNotes.some((sourceNote) => sourceNote.id === "user-prospectus"));
+  assert.ok(sourceNotes.some((sourceNote) => sourceNote.id === "spacex-company-disclosures"));
   assert.ok(sourceNotes.some((sourceNote) => sourceNote.id === "wef-clear-orbit"));
   assert.ok(sourceNotes.some((sourceNote) => sourceNote.id === "nasa-commercial-space"));
   assert.ok(sourceNotes.some((sourceNote) => sourceNote.id === "x-threejs-reference"));
+});
+
+test("primary chapters include company examples for educational deep dives", () => {
+  for (const chapter of chapters) {
+    for (const { id: lang } of languages) {
+      const editorial = getEditorialLayer(chapter.nodeId, lang);
+      assert.ok(editorial.companyExamples.length >= 2, `${chapter.nodeId} missing ${lang} company examples`);
+      for (const company of editorial.companyExamples) {
+        assert.ok(company.name.length > 2);
+        assert.ok(company.ticker.length >= 2);
+        assert.ok(company.role.length > 20);
+        const url = new URL(company.url);
+        assert.equal(url.protocol, "https:");
+      }
+    }
+  }
+});
+
+test("audio summaries cover all primary chapters in both languages", () => {
+  assert.deepEqual(
+    audioSummaries.map((summary) => summary.nodeId),
+    chapters.map((chapter) => chapter.nodeId)
+  );
+
+  for (const summary of audioSummaries) {
+    for (const { id: lang } of languages) {
+      assert.ok(summary.copy[lang].title.length > 1);
+      assert.ok(summary.copy[lang].script.length > 50);
+      assert.ok(summary.copy[lang].file.endsWith(".mp3"));
+    }
+  }
+});
+
+test("audio summary files exist for fixed MP3 playback", async () => {
+  for (const summary of audioSummaries) {
+    for (const { id: lang } of languages) {
+      await access(summary.copy[lang].file);
+    }
+  }
+});
+
+test("public-facing content avoids direct document-title wording", () => {
+  const publicContent = JSON.stringify({
+    audioSummaries,
+    editorialLayers,
+    nodes,
+    pageCopy,
+    sourceNotes
+  });
+
+  assert.equal(new RegExp("prospec" + "tus", "i").test(publicContent), false);
+  assert.equal(new RegExp("SpaceX " + "EU", "i").test(publicContent), false);
 });

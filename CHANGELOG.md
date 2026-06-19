@@ -25,8 +25,15 @@ This project follows a maintenance-friendly format inspired by Keep a Changelog,
   - Key numbers.
   - Reality check.
   - Deep dive.
+  - Public-company examples.
   - Sources.
-- Added editorial content based on NASA commercial space pages, NASA spaceships and rockets page, WEF Clear Orbit Secure Future 2026, and the user-provided SpaceX EU Prospectus dated June 5, 2026.
+- Added editorial content based on NASA commercial space pages, NASA spaceships and rockets page, WEF Clear Orbit Secure Future 2026, and SpaceX company disclosure materials dated June 2026.
+- Added educational public-company example links to the five primary Deep dive cards, with an education-only note that they are not investment advice.
+- Added bilingual short audio-summary scripts for the five primary cards.
+- Added a compact audio player with play, pause, resume, and playlist selection.
+- Added ElevenLabs audio generation script that outputs bilingual MP3 files to `assets/audio/`.
+- Changed the audio player from browser speech synthesis to fixed ElevenLabs MP3 playback.
+- Added analytics events for audio playback, audio playlist selection, and company-example link clicks.
 - Added source notes in `src/data/content.js` for future editorial review.
 - Added a low-profile About link in the bottom-right corner for both desktop and mobile.
 - Added About modal content curated by DanDanStop.

@@ -1,0 +1,101 @@
+{
+  "generatedAt": "2026-06-19T15:28:14.840Z",
+  "modelId": "eleven_multilingual_v2",
+  "outputFormat": "mp3_44100_128",
+  "voices": {
+    "en": "lxYfHSkYm1EzQzGhdbfc",
+    "zh": "MNwNcuqILoUHnUG7B9kO"
+  },
+  "files": [
+    {
+      "lang": "en",
+      "nodeId": "launch-site",
+      "title": "Launch Site",
+      "voiceId": "lxYfHSkYm1EzQzGhdbfc",
+      "text": "The space economy is an industry chain from Earth to orbit. Let's start on the ground. A launch site is not just a location; it is the mission control layer that turns hardware into an orbital launch through integration, fueling, safety, and countdown operations.",
+      "file": "assets/audio/en-launch-site.mp3",
+      "bytes": 278404
+    },
+    {
+      "lang": "zh",
+      "nodeId": "launch-site",
+      "title": "發射站",
+      "voiceId": "MNwNcuqILoUHnUG7B9kO",
+      "text": "太空經濟，是一條從地面延伸到軌道的產業鏈。我們先從地面開始。發射站不是一塊空地，它像太空任務的總控中心，把整合、燃料、安全和倒數流程串起來，讓硬體真的變成軌道任務。",
+      "file": "assets/audio/zh-launch-site.mp3",
+      "bytes": 280494
+    },
+    {
+      "lang": "en",
+      "nodeId": "rocket",
+      "title": "Rocket",
+      "voiceId": "lxYfHSkYm1EzQzGhdbfc",
+      "text": "Next comes the rocket. Think of it as the logistics layer of the space economy. Reuse is what can move launch from a one-time mission toward a repeatable transportation service.",
+      "file": "assets/audio/en-rocket.mp3",
+      "bytes": 188125
+    },
+    {
+      "lang": "zh",
+      "nodeId": "rocket",
+      "title": "火箭",
+      "voiceId": "MNwNcuqILoUHnUG7B9kO",
+      "text": "接著看火箭。它是太空經濟的物流層，當可回收技術越成熟，發射就不只是一次冒險，而是更接近可重複營運的運輸服務。",
+      "file": "assets/audio/zh-rocket.mp3",
+      "bytes": 176422
+    },
+    {
+      "lang": "en",
+      "nodeId": "satellite",
+      "title": "Satellite",
+      "voiceId": "lxYfHSkYm1EzQzGhdbfc",
+      "text": "Once in orbit, satellites turn space into services. Communications, observation, navigation, and data relay all depend on these platforms quietly working above Earth.",
+      "file": "assets/audio/en-satellite.mp3",
+      "bytes": 194813
+    },
+    {
+      "lang": "zh",
+      "nodeId": "satellite",
+      "title": "衛星",
+      "voiceId": "MNwNcuqILoUHnUG7B9kO",
+      "text": "到了軌道，衛星才把太空變成服務。通訊、觀測、導航和資料中繼，都靠這些軌道上的平台，把太空能力帶回地面。",
+      "file": "assets/audio/zh-satellite.mp3",
+      "bytes": 174751
+    },
+    {
+      "lang": "en",
+      "nodeId": "ground-station",
+      "title": "Space Station",
+      "voiceId": "lxYfHSkYm1EzQzGhdbfc",
+      "text": "A space station works like a laboratory and workbench in orbit. It supports research, servicing, experiments, and international cooperation, while pointing toward future in-orbit infrastructure.",
+      "file": "assets/audio/en-space-station.mp3",
+      "bytes": 201500
+    },
+    {
+      "lang": "zh",
+      "nodeId": "ground-station",
+      "title": "太空站",
+      "voiceId": "MNwNcuqILoUHnUG7B9kO",
+      "text": "太空站像軌道上的實驗室和工作平台。科研、維修、國際合作和商業實驗都在這裡發生，也讓未來在軌服務變得更具體。",
+      "file": "assets/audio/zh-space-station.mp3",
+      "bytes": 183946
+    },
+    {
+      "lang": "en",
+      "nodeId": "applications",
+      "title": "Applications",
+      "voiceId": "lxYfHSkYm1EzQzGhdbfc",
+      "text": "Finally, the value returns to Earth. Broadband, aviation, maritime links, disaster backup, IoT, and direct-to-device services are where people actually feel the space economy.",
+      "file": "assets/audio/en-applications.mp3",
+      "bytes": 202336
+    },
+    {
+      "lang": "zh",
+      "nodeId": "applications",
+      "title": "下游應用",
+      "voiceId": "MNwNcuqILoUHnUG7B9kO",
+      "text": "最後回到地面。寬頻、航空、海事、災害備援、IoT 和手機直連衛星，這些應用才是一般人真正感受到太空經濟的時刻。",
+      "file": "assets/audio/zh-applications.mp3",
+      "bytes": 191469
+    }
+  ]
+}

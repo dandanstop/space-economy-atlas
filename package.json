@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/serve.mjs",
+    "audio:elevenlabs": "node scripts/generate-elevenlabs-audio.mjs",
     "render:og": "node scripts/render-og-image.cjs",
     "build": "node scripts/verify-static.mjs",
     "vercel:build": "npm run build && node scripts/build-vercel.mjs",

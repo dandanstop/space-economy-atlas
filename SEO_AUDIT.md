@@ -223,7 +223,7 @@ Recommendations:
 Strengths:
 
 - Clear editorial angle: space economy as infrastructure.
-- Uses credible sources: NASA, WEF, and a user-provided SpaceX prospectus.
+- Uses credible sources: NASA, WEF, and SpaceX company disclosure materials.
 - Includes specific figures and risk caveats.
 - Includes contact information through the About modal.
 - Last updated date is visible in the About modal.

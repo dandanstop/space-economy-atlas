@@ -35,6 +35,8 @@ const requiredIds = [
   "about-dialog",
   "about-dialog-content",
   "chapter-rail",
+  "chapter-rail-buttons",
+  "audio-guide",
   "hero-copy",
   "node-panel",
   "mobile-scroll-steps"

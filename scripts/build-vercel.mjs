@@ -12,6 +12,7 @@ const files = [
 ];
 
 const directories = [
+  "assets",
   "src",
   "node_modules/three/build",
   "node_modules/three/examples/jsm"

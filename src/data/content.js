@@ -1,6 +1,6 @@
 export const languages = [
-  { id: "en", label: "EN", htmlLang: "en" },
-  { id: "zh", label: "中文", htmlLang: "zh-Hant" }
+  { id: "en", label: "EN", htmlLang: "en", speechLang: "en-US" },
+  { id: "zh", label: "中文", htmlLang: "zh-Hant", speechLang: "zh-TW" }
 ];
 
 export const valueChain = [
@@ -18,6 +18,94 @@ export const chapters = [
   { id: "satellite", nodeId: "satellite", icon: "satellite" },
   { id: "ground-segment", nodeId: "ground-station", icon: "antenna" },
   { id: "applications", nodeId: "applications", icon: "market" }
+];
+
+export const audioSummaries = [
+  {
+    nodeId: "launch-site",
+    copy: {
+      zh: {
+        title: "發射站",
+        file: "assets/audio/zh-launch-site.mp3",
+        script:
+          "太空經濟，是一條從地面延伸到軌道的產業鏈。我們先從地面開始。發射站不是一塊空地，它像太空任務的總控中心，把整合、燃料、安全和倒數流程串起來，讓硬體真的變成軌道任務。"
+      },
+      en: {
+        title: "Launch Site",
+        file: "assets/audio/en-launch-site.mp3",
+        script:
+          "The space economy is an industry chain from Earth to orbit. Let's start on the ground. A launch site is not just a location; it is the mission control layer that turns hardware into an orbital launch through integration, fueling, safety, and countdown operations."
+      }
+    }
+  },
+  {
+    nodeId: "rocket",
+    copy: {
+      zh: {
+        title: "火箭",
+        file: "assets/audio/zh-rocket.mp3",
+        script:
+          "接著看火箭。它是太空經濟的物流層，當可回收技術越成熟，發射就不只是一次冒險，而是更接近可重複營運的運輸服務。"
+      },
+      en: {
+        title: "Rocket",
+        file: "assets/audio/en-rocket.mp3",
+        script:
+          "Next comes the rocket. Think of it as the logistics layer of the space economy. Reuse is what can move launch from a one-time mission toward a repeatable transportation service."
+      }
+    }
+  },
+  {
+    nodeId: "satellite",
+    copy: {
+      zh: {
+        title: "衛星",
+        file: "assets/audio/zh-satellite.mp3",
+        script:
+          "到了軌道，衛星才把太空變成服務。通訊、觀測、導航和資料中繼，都靠這些軌道上的平台，把太空能力帶回地面。"
+      },
+      en: {
+        title: "Satellite",
+        file: "assets/audio/en-satellite.mp3",
+        script:
+          "Once in orbit, satellites turn space into services. Communications, observation, navigation, and data relay all depend on these platforms quietly working above Earth."
+      }
+    }
+  },
+  {
+    nodeId: "ground-station",
+    copy: {
+      zh: {
+        title: "太空站",
+        file: "assets/audio/zh-space-station.mp3",
+        script:
+          "太空站像軌道上的實驗室和工作平台。科研、維修、國際合作和商業實驗都在這裡發生，也讓未來在軌服務變得更具體。"
+      },
+      en: {
+        title: "Space Station",
+        file: "assets/audio/en-space-station.mp3",
+        script:
+          "A space station works like a laboratory and workbench in orbit. It supports research, servicing, experiments, and international cooperation, while pointing toward future in-orbit infrastructure."
+      }
+    }
+  },
+  {
+    nodeId: "applications",
+    copy: {
+      zh: {
+        title: "下游應用",
+        file: "assets/audio/zh-applications.mp3",
+        script:
+          "最後回到地面。寬頻、航空、海事、災害備援、IoT 和手機直連衛星，這些應用才是一般人真正感受到太空經濟的時刻。"
+      },
+      en: {
+        title: "Applications",
+        file: "assets/audio/en-applications.mp3",
+        script:
+          "Finally, the value returns to Earth. Broadband, aviation, maritime links, disaster backup, IoT, and direct-to-device services are where people actually feel the space economy."
+      }
+    }
+  }
 ];
 
 export const pageCopy = {
@@ -52,7 +140,17 @@ export const pageCopy = {
     },
     keyNumbers: "關鍵數字",
     deepDive: "深讀",
+    publicCompanies: "上市公司案例",
+    publicCompaniesNote: "教育參考，不構成投資建議；上市狀態、業務組合與風險會隨時間改變。",
     sources: "來源",
+    audio: {
+      title: "語音摘要",
+      play: "播放",
+      pause: "暫停",
+      resume: "繼續",
+      playlist: "播放清單",
+      unavailable: "此瀏覽器不支援語音播放"
+    },
     detailTabs: {
       overview: "摘要",
       industry: "產業",
@@ -92,7 +190,17 @@ export const pageCopy = {
     },
     keyNumbers: "Key numbers",
     deepDive: "Deep dive",
+    publicCompanies: "Public-company examples",
+    publicCompaniesNote: "For education only, not investment advice. Listings, business mix, and risks can change over time.",
     sources: "Sources",
+    audio: {
+      title: "Audio summary",
+      play: "Play",
+      pause: "Pause",
+      resume: "Resume",
+      playlist: "Playlist",
+      unavailable: "Audio playback is not supported in this browser"
+    },
     detailTabs: {
       overview: "Overview",
       industry: "Industry",
@@ -269,11 +377,25 @@ export const editorialLayers = {
       ],
       deepDive: [
         "發射站不是背景，而是任務變成產能的地方。NASA 的教育內容把火箭定位為把人員、貨物或太空船送往低地球軌道與更遠處的運輸系統；發射站則負責整合、燃料、安全、測試與任務控制。",
-        "從 SpaceX Prospectus 的角度看，發射頻率和送入軌道質量是產業鏈速度的前導指標。當發射次數增加，瓶頸會從單一火箭性能延伸到發射場、環評、天候、事故調查和地面團隊週轉。"
+        "從 SpaceX 揭露的營運指標來看，發射頻率和送入軌道質量是產業鏈速度的前導指標。當發射次數增加，瓶頸會從單一火箭性能延伸到發射場、環評、天候、事故調查和地面團隊週轉。"
+      ],
+      companyExamples: [
+        {
+          name: "Rocket Lab",
+          ticker: "RKLB",
+          role: "可觀察發射服務、發射場配置、衛星製造與任務管理如何整合成端到端太空公司。",
+          url: "https://investors.rocketlabcorp.com/"
+        },
+        {
+          name: "Northrop Grumman",
+          ticker: "NOC",
+          role: "可觀察大型航太國防公司如何布局發射、推進、太空系統與政府任務。",
+          url: "https://www.northropgrumman.com/what-we-do/space"
+        }
       ],
       sources: [
         { label: "NASA Spaceships and Rockets", url: "https://www.nasa.gov/humans-in-space/spaceships-and-rockets/" },
-        { label: "SpaceX EU Prospectus", detail: "pp. 132-133, Falcon launch cadence and mass-to-orbit disclosures" }
+        { label: "SpaceX company disclosures", detail: "Falcon launch cadence and mass-to-orbit figures disclosed by SpaceX" }
       ]
     },
     en: {
@@ -283,11 +405,25 @@ export const editorialLayers = {
       ],
       deepDive: [
         "A launch site is not scenery; it is where a mission becomes repeatable capacity. NASA frames rockets as transport systems that move crew, cargo, or spacecraft to low Earth orbit and beyond, while the site handles integration, fueling, testing, safety, and mission control.",
-        "SpaceX's prospectus makes launch cadence and mass to orbit useful leading indicators for the whole value chain. As launch volume rises, constraints move beyond vehicle performance into pads, environmental review, weather, anomaly investigations, and ground-team turnaround."
+        "SpaceX-disclosed launch cadence and mass to orbit are useful leading indicators for the whole value chain. As launch volume rises, constraints move beyond vehicle performance into pads, environmental review, weather, anomaly investigations, and ground-team turnaround."
+      ],
+      companyExamples: [
+        {
+          name: "Rocket Lab",
+          ticker: "RKLB",
+          role: "Shows how launch services, launch pads, satellite manufacturing, and on-orbit management can combine in one public space company.",
+          url: "https://investors.rocketlabcorp.com/"
+        },
+        {
+          name: "Northrop Grumman",
+          ticker: "NOC",
+          role: "Shows how a large aerospace and defense company spans launch, propulsion, space systems, and government missions.",
+          url: "https://www.northropgrumman.com/what-we-do/space"
+        }
       ],
       sources: [
         { label: "NASA Spaceships and Rockets", url: "https://www.nasa.gov/humans-in-space/spaceships-and-rockets/" },
-        { label: "SpaceX EU Prospectus", detail: "pp. 132-133, Falcon launch cadence and mass-to-orbit disclosures" }
+        { label: "SpaceX company disclosures", detail: "Falcon launch cadence and mass-to-orbit figures disclosed by SpaceX" }
       ]
     }
   },
@@ -299,11 +435,31 @@ export const editorialLayers = {
       ],
       deepDive: [
         "火箭是太空經濟的物流層。NASA 的科普語境強調，不同任務會需要不同大小、推力與能力的火箭；距離越遠、酬載越重，運輸系統就越複雜。",
-        "SpaceX Prospectus 把 Starship 描述為發射能力的階梯式變化：更高酬載、更高頻率和可重複使用。但這類前瞻數字應標示為公司揭露或公司預期，並和測試失敗、監管審批、發射許可等風險一起呈現。"
+        "SpaceX 將 Starship 定位為發射能力的階梯式變化：更高酬載、更高頻率和可重複使用。但這類前瞻數字應標示為公司揭露或公司預期，並和測試失敗、監管審批、發射許可等風險一起呈現。"
+      ],
+      companyExamples: [
+        {
+          name: "Rocket Lab",
+          ticker: "RKLB",
+          role: "可觀察小型發射、Neutron 大型火箭開發、衛星平台與任務服務的組合。",
+          url: "https://investors.rocketlabcorp.com/"
+        },
+        {
+          name: "Northrop Grumman",
+          ticker: "NOC",
+          role: "可觀察固體火箭馬達、發射、推進與深空探索任務的供應鏈角色。",
+          url: "https://www.northropgrumman.com/what-we-do/space"
+        },
+        {
+          name: "L3Harris",
+          ticker: "LHX",
+          role: "可觀察火箭、太空載具與防務系統中的推進與動力系統。",
+          url: "https://www.l3harris.com/company/powering-defense-and-space-exploration"
+        }
       ],
       sources: [
         { label: "NASA Spaceships and Rockets", url: "https://www.nasa.gov/humans-in-space/spaceships-and-rockets/" },
-        { label: "SpaceX EU Prospectus", detail: "pp. 94-98, Starship capacity and development expectations" }
+        { label: "SpaceX company disclosures", detail: "Starship capacity targets and development expectations disclosed by SpaceX" }
       ]
     },
     en: {
@@ -315,9 +471,29 @@ export const editorialLayers = {
         "Rockets are the logistics layer of the space economy. NASA's educational framing is useful here: mission requirements determine the rocket, and farther or heavier missions require more capable launch systems.",
         "SpaceX describes Starship as a step-change in launch capability through payload, cadence, and reuse. In the site copy, these figures should be labeled as company disclosures or expectations and paired with development, licensing, anomaly, and regulatory risk."
       ],
+      companyExamples: [
+        {
+          name: "Rocket Lab",
+          ticker: "RKLB",
+          role: "Shows the mix of small launch, Neutron development, spacecraft platforms, and mission services.",
+          url: "https://investors.rocketlabcorp.com/"
+        },
+        {
+          name: "Northrop Grumman",
+          ticker: "NOC",
+          role: "Shows the supply-chain role of solid rocket motors, launch, propulsion, and exploration missions.",
+          url: "https://www.northropgrumman.com/what-we-do/space"
+        },
+        {
+          name: "L3Harris",
+          ticker: "LHX",
+          role: "Shows propulsion and power systems used across rockets, spacecraft, and defense systems.",
+          url: "https://www.l3harris.com/company/powering-defense-and-space-exploration"
+        }
+      ],
       sources: [
         { label: "NASA Spaceships and Rockets", url: "https://www.nasa.gov/humans-in-space/spaceships-and-rockets/" },
-        { label: "SpaceX EU Prospectus", detail: "pp. 94-98, Starship capacity and development expectations" }
+        { label: "SpaceX company disclosures", detail: "Starship capacity targets and development expectations disclosed by SpaceX" }
       ]
     }
   },
@@ -329,11 +505,31 @@ export const editorialLayers = {
       ],
       deepDive: [
         "衛星是把軌道變成服務的核心載體。它可以承載通訊、觀測、導航、資料中繼，也可能延伸到在軌運算與邊緣資料處理。",
-        "SpaceX 的數據很適合教育使用者理解星座經濟：衛星數量代表網路容量與覆蓋，訂閱戶代表下游採用，兩者一起說明為什麼衛星不只是硬體，而是 recurring service 的基礎。"
+        "SpaceX 揭露的數據很適合教育使用者理解星座經濟：衛星數量代表網路容量與覆蓋，訂閱戶代表下游採用，兩者一起說明為什麼衛星不只是硬體，而是 recurring service 的基礎。"
+      ],
+      companyExamples: [
+        {
+          name: "Planet Labs",
+          ticker: "PL",
+          role: "可觀察地球觀測衛星如何把每日影像轉成資料產品與 recurring revenue。",
+          url: "https://investors.planet.com/overview/default.aspx"
+        },
+        {
+          name: "Iridium",
+          ticker: "IRDM",
+          role: "可觀察 LEO 衛星通訊、IoT、政府任務、PNT 與直接連接裝置服務。",
+          url: "https://www.iridium.com/company/investor-relations"
+        },
+        {
+          name: "MDA Space",
+          ticker: "MDA",
+          role: "可觀察衛星系統、地球觀測、機械臂與太空任務製造能力。",
+          url: "https://mda-en.investorroom.com/"
+        }
       ],
       sources: [
         { label: "NASA Low Earth Orbit Economy", url: "https://www.nasa.gov/humans-in-space/commercial-space/low-earth-orbit-economy/" },
-        { label: "SpaceX EU Prospectus", detail: "pp. 8, 96, 134, Starlink constellation and subscriber disclosures" }
+        { label: "SpaceX company disclosures", detail: "Starlink constellation scale and subscriber figures disclosed by SpaceX" }
       ]
     },
     en: {
@@ -343,11 +539,31 @@ export const editorialLayers = {
       ],
       deepDive: [
         "Satellites are the core assets that turn orbit into services. They can carry communications, observation, navigation, data relay, and eventually orbital compute or edge processing.",
-        "SpaceX's disclosed figures are useful for education because they connect constellation scale with business adoption: satellite count indicates coverage and capacity, while subscribers show how orbital hardware becomes a recurring service platform."
+        "SpaceX-disclosed figures are useful for education because they connect constellation scale with business adoption: satellite count indicates coverage and capacity, while subscribers show how orbital hardware becomes a recurring service platform."
+      ],
+      companyExamples: [
+        {
+          name: "Planet Labs",
+          ticker: "PL",
+          role: "Shows how Earth-observation satellites turn daily imagery into data products and recurring revenue.",
+          url: "https://investors.planet.com/overview/default.aspx"
+        },
+        {
+          name: "Iridium",
+          ticker: "IRDM",
+          role: "Shows LEO satellite communications, IoT, government, PNT, and direct-to-device services.",
+          url: "https://www.iridium.com/company/investor-relations"
+        },
+        {
+          name: "MDA Space",
+          ticker: "MDA",
+          role: "Shows satellite systems, Earth observation, robotics, and mission manufacturing capabilities.",
+          url: "https://mda-en.investorroom.com/"
+        }
       ],
       sources: [
         { label: "NASA Low Earth Orbit Economy", url: "https://www.nasa.gov/humans-in-space/commercial-space/low-earth-orbit-economy/" },
-        { label: "SpaceX EU Prospectus", detail: "pp. 8, 96, 134, Starlink constellation and subscriber disclosures" }
+        { label: "SpaceX company disclosures", detail: "Starlink constellation scale and subscriber figures disclosed by SpaceX" }
       ]
     }
   },
@@ -391,6 +607,26 @@ export const editorialLayers = {
         "太空站適合作為網站的教育橋樑：它不是單一任務，而是軌道上的研究、製造、生命科學、國際合作與在軌服務平台。",
         "NASA 的 LEO economy 論述強調，ISS 之後的低軌活動會逐步轉向商業太空站和私人太空人任務。這能讓使用者理解太空站不只是科研象徵，也是未來軌道市場的基礎設施。"
       ],
+      companyExamples: [
+        {
+          name: "Redwire",
+          ticker: "RDW",
+          role: "可觀察在軌基礎設施、ISS 太陽能陣列、微重力實驗與商業太空站供應鏈。",
+          url: "https://rdw.com/"
+        },
+        {
+          name: "MDA Space",
+          ticker: "MDA",
+          role: "可觀察太空站機械臂、在軌作業、衛星系統與任務支援能力。",
+          url: "https://mda-en.investorroom.com/"
+        },
+        {
+          name: "Northrop Grumman",
+          ticker: "NOC",
+          role: "可觀察太空站補給、太空系統與政府太空任務中的大型承包商角色。",
+          url: "https://www.northropgrumman.com/what-we-do/space"
+        }
+      ],
       sources: [
         { label: "NASA Low Earth Orbit Economy", url: "https://www.nasa.gov/humans-in-space/commercial-space/low-earth-orbit-economy/" },
         { label: "NASA Commercial Space", url: "https://www.nasa.gov/humans-in-space/commercial-space/" }
@@ -404,6 +640,26 @@ export const editorialLayers = {
       deepDive: [
         "The space station is a strong educational bridge for the site: it is not a single mission, but a platform for research, manufacturing, life sciences, international cooperation, and in-orbit services.",
         "NASA's LEO economy framing shows how activity after the ISS can shift toward commercial stations and private astronaut missions. That helps users understand stations as infrastructure for a future orbital marketplace."
+      ],
+      companyExamples: [
+        {
+          name: "Redwire",
+          ticker: "RDW",
+          role: "Shows in-orbit infrastructure, ISS solar arrays, microgravity investigations, and commercial-station supply-chain exposure.",
+          url: "https://rdw.com/"
+        },
+        {
+          name: "MDA Space",
+          ticker: "MDA",
+          role: "Shows station robotics, on-orbit operations, satellite systems, and mission support capabilities.",
+          url: "https://mda-en.investorroom.com/"
+        },
+        {
+          name: "Northrop Grumman",
+          ticker: "NOC",
+          role: "Shows the large-prime role in station resupply, space systems, and government space missions.",
+          url: "https://www.northropgrumman.com/what-we-do/space"
+        }
       ],
       sources: [
         { label: "NASA Low Earth Orbit Economy", url: "https://www.nasa.gov/humans-in-space/commercial-space/low-earth-orbit-economy/" },
@@ -421,9 +677,35 @@ export const editorialLayers = {
         "下游應用是太空經濟被一般使用者感受到的地方：偏遠地區寬頻、災害備援、航空與海事連線、政府任務、IoT、地球觀測資料，以及未來手機直連衛星。",
         "NASA 的 LEO economy 也把太空應用延伸到在太空製造與材料研究。這讓網站可以把『應用』寫得更廣，不只等於衛星網路，也包含科研、製造和地面產業升級。"
       ],
+      companyExamples: [
+        {
+          name: "AST SpaceMobile",
+          ticker: "ASTS",
+          role: "可觀察 direct-to-cell 如何把衛星網路延伸到一般手機與行動網路合作夥伴。",
+          url: "https://investors.ast-science.com/"
+        },
+        {
+          name: "Iridium",
+          ticker: "IRDM",
+          role: "可觀察全球衛星通訊、IoT、政府服務與裝置連線如何形成下游收入。",
+          url: "https://www.iridium.com/company/investor-relations"
+        },
+        {
+          name: "Viasat",
+          ticker: "VSAT",
+          role: "可觀察航空、海事、政府與企業連線如何把衛星容量轉成服務合約。",
+          url: "https://investors.viasat.com/"
+        },
+        {
+          name: "Planet Labs",
+          ticker: "PL",
+          role: "可觀察地球觀測資料如何服務農業、政府、保險、環境與供應鏈場景。",
+          url: "https://investors.planet.com/overview/default.aspx"
+        }
+      ],
       sources: [
         { label: "NASA Low Earth Orbit Economy", url: "https://www.nasa.gov/humans-in-space/commercial-space/low-earth-orbit-economy/" },
-        { label: "SpaceX EU Prospectus", detail: "pp. 21, 134, direct-to-cell partnerships and Starlink subscribers" }
+        { label: "SpaceX company disclosures", detail: "Direct-to-cell partnerships and Starlink subscriber figures disclosed by SpaceX" }
       ]
     },
     en: {
@@ -435,9 +717,35 @@ export const editorialLayers = {
         "Applications are where ordinary users feel the space economy: rural broadband, disaster backup, aviation and maritime connectivity, government missions, IoT, Earth observation data, and future satellite-to-phone service.",
         "NASA's LEO economy also extends applications into in-space production and materials research. That lets the site frame applications more broadly than satellite internet, including science, manufacturing, and industrial spillovers on Earth."
       ],
+      companyExamples: [
+        {
+          name: "AST SpaceMobile",
+          ticker: "ASTS",
+          role: "Shows how direct-to-cell can extend satellite networks to ordinary phones and mobile-network partnerships.",
+          url: "https://investors.ast-science.com/"
+        },
+        {
+          name: "Iridium",
+          ticker: "IRDM",
+          role: "Shows how global satellite communications, IoT, government services, and device connectivity become downstream revenue.",
+          url: "https://www.iridium.com/company/investor-relations"
+        },
+        {
+          name: "Viasat",
+          ticker: "VSAT",
+          role: "Shows how aviation, maritime, government, and enterprise connectivity turn satellite capacity into service contracts.",
+          url: "https://investors.viasat.com/"
+        },
+        {
+          name: "Planet Labs",
+          ticker: "PL",
+          role: "Shows how Earth-observation data serves agriculture, government, insurance, environment, and supply-chain use cases.",
+          url: "https://investors.planet.com/overview/default.aspx"
+        }
+      ],
       sources: [
         { label: "NASA Low Earth Orbit Economy", url: "https://www.nasa.gov/humans-in-space/commercial-space/low-earth-orbit-economy/" },
-        { label: "SpaceX EU Prospectus", detail: "pp. 21, 134, direct-to-cell partnerships and Starlink subscribers" }
+        { label: "SpaceX company disclosures", detail: "Direct-to-cell partnerships and Starlink subscriber figures disclosed by SpaceX" }
       ]
     }
   },
@@ -454,7 +762,7 @@ export const editorialLayers = {
       sources: [
         { label: "WEF Clear Orbit, Secure Future", detail: "pp. 4, 16, 18-23, space sustainability and economic-risk framing" },
         { label: "NASA Commercial Space", url: "https://www.nasa.gov/humans-in-space/commercial-space/" },
-        { label: "SpaceX EU Prospectus", detail: "pp. 67-68, 130-140, segment and KPI disclosures" }
+        { label: "SpaceX company disclosures", detail: "Segment and KPI figures disclosed by SpaceX" }
       ]
     },
     en: {
@@ -469,7 +777,7 @@ export const editorialLayers = {
       sources: [
         { label: "WEF Clear Orbit, Secure Future", detail: "pp. 4, 16, 18-23, space sustainability and economic-risk framing" },
         { label: "NASA Commercial Space", url: "https://www.nasa.gov/humans-in-space/commercial-space/" },
-        { label: "SpaceX EU Prospectus", detail: "pp. 67-68, 130-140, segment and KPI disclosures" }
+        { label: "SpaceX company disclosures", detail: "Segment and KPI figures disclosed by SpaceX" }
       ]
     }
   }
@@ -499,8 +807,8 @@ export function getEditorialLayer(nodeId, lang) {
 
 export const sourceNotes = [
   {
-    id: "user-prospectus",
-    label: "User-provided SpaceX EU prospectus, June 5, 2026",
+    id: "spacex-company-disclosures",
+    label: "SpaceX company disclosure materials, June 2026",
     note: "Use for structure and themes; independently verify market numbers before publishing."
   },
   {

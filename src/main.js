@@ -1,4 +1,5 @@
 import {
+  audioSummaries,
   chapters,
   getCopy,
   getEditorialLayer,
@@ -28,6 +29,8 @@ const elements = {
   fallbackView: document.querySelector("#fallback-view"),
   languageToggle: document.querySelector("#language-toggle"),
   chapterRail: document.querySelector("#chapter-rail"),
+  chapterRailButtons: document.querySelector("#chapter-rail-buttons"),
+  audioGuide: document.querySelector("#audio-guide"),
   heroCopy: document.querySelector("#hero-copy"),
   nodePanel: document.querySelector("#node-panel"),
   mobileScrollSteps: document.querySelector("#mobile-scroll-steps")
@@ -40,6 +43,10 @@ const mobileLayoutQuery = window.matchMedia?.("(max-width: 920px)");
 const wheelStepCooldownMs = 620;
 const wheelStepThreshold = 36;
 let lastWheelStepAt = 0;
+let audioSelectedNodeId = audioSummaries[0]?.nodeId ?? "launch-site";
+let audioStatus = "idle";
+const audioElement = new Audio();
+audioElement.preload = "metadata";
 
 if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) {
   state = setMode(state, "explore");
@@ -171,6 +178,144 @@ function renderSources(editorial) {
   return list;
 }
 
+function renderCompanyExamples(editorial, copy) {
+  const wrap = document.createElement("div");
+  wrap.className = "node-panel__companies";
+
+  const note = document.createElement("p");
+  note.className = "node-panel__company-note";
+  note.textContent = copy.publicCompaniesNote;
+
+  const list = document.createElement("ul");
+  list.className = "node-panel__company-list";
+
+  for (const company of editorial?.companyExamples ?? []) {
+    const item = document.createElement("li");
+    item.className = "node-panel__company";
+
+    const link = document.createElement("a");
+    link.href = company.url;
+    link.target = "_blank";
+    link.rel = "noreferrer";
+    link.textContent = company.ticker ? `${company.name} (${company.ticker})` : company.name;
+    link.addEventListener("click", () => {
+      trackEvent("company_example_clicked", {
+        company_name: company.name,
+        ticker: company.ticker ?? "",
+        node_id: state.selectedNode,
+        language: state.lang
+      });
+    });
+
+    const role = document.createElement("p");
+    role.textContent = company.role;
+
+    item.append(link, role);
+    list.append(item);
+  }
+
+  wrap.append(note, list);
+  return wrap;
+}
+
+function getAudioSegment(nodeId = audioSelectedNodeId) {
+  return audioSummaries.find((segment) => segment.nodeId === nodeId) ?? audioSummaries[0] ?? null;
+}
+
+function getAudioSegmentCopy(segment = getAudioSegment()) {
+  return segment?.copy?.[state.lang] ?? segment?.copy?.en ?? segment?.copy?.zh ?? null;
+}
+
+function hasAudioFile(segmentCopy = getAudioSegmentCopy()) {
+  return Boolean(segmentCopy?.file);
+}
+
+function getAudioTrackingParams(action) {
+  const segment = getAudioSegment();
+  const segmentCopy = getAudioSegmentCopy(segment);
+  return {
+    audio_action: action,
+    audio_source: "elevenlabs_mp3",
+    audio_segment_id: segment?.nodeId ?? "",
+    audio_segment_title: segmentCopy?.title ?? "",
+    audio_file: segmentCopy?.file ?? "",
+    language: state.lang
+  };
+}
+
+function resetAudio({ renderGuide = true } = {}) {
+  audioElement.pause();
+  audioElement.removeAttribute("src");
+  audioElement.load();
+  audioStatus = "idle";
+  if (renderGuide) renderAudioGuide(getCopy(state.lang));
+}
+
+async function startAudio({ eventName = "audio_played", action = "played" } = {}) {
+  const segment = getAudioSegment();
+  const segmentCopy = getAudioSegmentCopy(segment);
+  if (!segmentCopy?.file) return;
+
+  const audioUrl = new URL(segmentCopy.file, document.baseURI).href;
+  if (audioElement.src !== audioUrl) {
+    audioElement.src = audioUrl;
+    audioElement.currentTime = 0;
+  }
+
+  try {
+    await audioElement.play();
+    audioStatus = "playing";
+    renderAudioGuide(getCopy(state.lang));
+    trackEvent(eventName, getAudioTrackingParams(action));
+  } catch {
+    audioStatus = "idle";
+    renderAudioGuide(getCopy(state.lang));
+    trackEvent("audio_error", getAudioTrackingParams("error"));
+  }
+}
+
+function pauseAudio() {
+  if (audioStatus !== "playing") return;
+  audioElement.pause();
+  audioStatus = "paused";
+  renderAudioGuide(getCopy(state.lang));
+  trackEvent("audio_paused", getAudioTrackingParams("paused"));
+}
+
+function resumeAudio() {
+  if (audioStatus !== "paused") return;
+  startAudio({ eventName: "audio_resumed", action: "resumed" });
+}
+
+function toggleAudio() {
+  if (audioStatus === "playing") {
+    pauseAudio();
+    return;
+  }
+
+  if (audioStatus === "paused") {
+    resumeAudio();
+    return;
+  }
+
+  startAudio();
+}
+
+function selectAudioSegment(nodeId) {
+  const shouldContinue = audioStatus === "playing";
+  resetAudio({ renderGuide: false });
+  audioSelectedNodeId = nodeId;
+  renderAudioGuide(getCopy(state.lang));
+  trackEvent("audio_segment_selected", getAudioTrackingParams("segment_selected"));
+  if (shouldContinue) startAudio();
+}
+
+function maybeSyncAudioSegment(nodeId) {
+  if (audioStatus !== "idle") return;
+  if (!audioSummaries.some((segment) => segment.nodeId === nodeId)) return;
+  audioSelectedNodeId = nodeId;
+}
+
 function setState(nextState) {
   const previousMode = state.mode;
   state = nextState;
@@ -192,6 +337,7 @@ function isInteractiveScrollTarget(target) {
       [
         "#node-panel",
         "#about-dialog",
+        "#audio-guide",
         "#language-toggle",
         "#chapter-rail",
         ".about-link",
@@ -231,12 +377,14 @@ function handleDesktopWheel(event) {
 
 function selectNodeInExplore(nodeId, { openPanel = false, interactionType = "unknown" } = {}) {
   const selected = setMode(selectNode(state, nodeId), "explore");
+  maybeSyncAudioSegment(nodeId);
   setState(openPanel ? setMobilePanelOpen(selected, true) : selected);
   trackEvent("node_selected", getNodeTrackingParams(nodeId, interactionType));
 }
 
 function openMobileNodePanel(nodeId, interactionType = "mobile_sticky_card") {
   const selected = setMode(selectNode(state, nodeId), "explore");
+  maybeSyncAudioSegment(nodeId);
   setState(setMobilePanelOpen(selected, true));
   trackEvent("overview_opened", getNodeTrackingParams(nodeId, interactionType));
 }
@@ -250,6 +398,7 @@ function renderLanguages() {
         pressed: state.lang === language.id,
         onClick: () => {
           if (state.lang !== language.id) {
+            resetAudio({ renderGuide: false });
             trackEvent("language_selected", {
               language: language.id,
               previous_language: state.lang,
@@ -310,6 +459,52 @@ function renderAbout(copy) {
   });
 
   elements.aboutDialogContent.replaceChildren(title, body, lastUpdated, contact);
+}
+
+function renderAudioGuide(copy) {
+  const segment = getAudioSegment();
+  const segmentCopy = getAudioSegmentCopy(segment);
+  const canPlayAudio = hasAudioFile(segmentCopy);
+
+  const label = document.createElement("span");
+  label.className = "audio-guide__label";
+  label.textContent = copy.audio.title;
+
+  const playLabel = audioStatus === "playing" ? copy.audio.pause : audioStatus === "paused" ? copy.audio.resume : copy.audio.play;
+  const playButton = createButton({
+    className: "audio-guide__button",
+    text: playLabel,
+    pressed: audioStatus === "playing",
+    disabled: !canPlayAudio,
+    onClick: toggleAudio
+  });
+  playButton.setAttribute("aria-label", playLabel);
+
+  const select = document.createElement("select");
+  select.className = "audio-guide__select";
+  select.setAttribute("aria-label", copy.audio.playlist);
+  select.disabled = !audioSummaries.length;
+  select.addEventListener("change", () => {
+    selectAudioSegment(select.value);
+  });
+
+  for (const summary of audioSummaries) {
+    const option = document.createElement("option");
+    option.value = summary.nodeId;
+    option.textContent = summary.copy?.[state.lang]?.title ?? summary.copy?.en?.title ?? summary.nodeId;
+    select.append(option);
+  }
+  select.value = segment?.nodeId ?? "";
+
+  const status = document.createElement("span");
+  status.className = "audio-guide__status";
+  status.textContent = canPlayAudio ? segmentCopy?.title ?? "" : copy.audio.unavailable;
+
+  const controls = document.createElement("div");
+  controls.className = "audio-guide__controls";
+  controls.append(playButton, select);
+
+  elements.audioGuide.replaceChildren(label, controls, status);
 }
 
 function openAboutDialog() {
@@ -373,7 +568,7 @@ function renderHero(copy) {
 }
 
 function renderChapters() {
-  elements.chapterRail.replaceChildren(
+  elements.chapterRailButtons.replaceChildren(
     ...chapters.map((chapter, index) => {
       const node = getNode(chapter.nodeId);
       const nodeCopy = node.copy[state.lang];
@@ -408,6 +603,7 @@ function observeMobileSteps() {
 
       const nodeId = visible?.target?.dataset?.node;
       if (!nodeId || state.mode !== "explore" || state.selectedNode === nodeId) return;
+      maybeSyncAudioSegment(nodeId);
       setState(setMode(selectNode(state, nodeId), "explore"));
       trackEvent("node_selected", getNodeTrackingParams(nodeId, "mobile_scroll"));
     },
@@ -454,6 +650,10 @@ function renderDetailBody(nodeCopy, editorial, copy) {
 
     if (editorial?.deepDive?.length) {
       body.append(renderDisclosure(copy.deepDive, renderDeepDive(editorial)));
+    }
+
+    if (editorial?.companyExamples?.length) {
+      body.append(renderDisclosure(copy.publicCompanies, renderCompanyExamples(editorial, copy)));
     }
 
     if (editorial?.sources?.length) {
@@ -561,6 +761,7 @@ function render() {
   renderBrand(copy);
   renderAbout(copy);
   renderLanguages();
+  renderAudioGuide(copy);
   renderHero(copy);
   renderChapters();
   renderNodePanel(copy);
@@ -587,6 +788,16 @@ function onWebGLUnavailable() {
 
 render();
 elements.app.addEventListener("wheel", handleDesktopWheel, { passive: false });
+audioElement.addEventListener("ended", () => {
+  audioStatus = "idle";
+  renderAudioGuide(getCopy(state.lang));
+  trackEvent("audio_completed", getAudioTrackingParams("completed"));
+});
+audioElement.addEventListener("error", () => {
+  audioStatus = "idle";
+  renderAudioGuide(getCopy(state.lang));
+  trackEvent("audio_error", getAudioTrackingParams("error"));
+});
 elements.aboutLink.addEventListener("click", openAboutDialog);
 elements.aboutDialogClose.addEventListener("click", closeAboutDialog);
 elements.aboutDialogClose.addEventListener("click", () => {

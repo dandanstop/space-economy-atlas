@@ -49,7 +49,9 @@ The page follows a progressive disclosure structure:
 - Key numbers: concise numeric context for education.
 - Reality check: constraints and risks for each node.
 - Deep dive: collapsed by default for interested readers.
-- Sources: collapsed by default with NASA, WEF, and SpaceX prospectus references.
+- Public-company examples: collapsed by default for educational links to relevant listed companies and official investor/company pages.
+- Sources: collapsed by default with NASA, WEF, and SpaceX company-disclosure references.
+- Audio summary: compact bilingual playlist with five short spoken chapter summaries.
 - About: low-profile text link in the bottom-right corner, opening a modal dialog.
 
 Current About content:
@@ -84,6 +86,13 @@ UI hierarchy:
 
 The desktop navigation uses a quiet header and a five-node navigation rail. The About link is intentionally low emphasis and fixed in the bottom-right corner.
 
+Audio summary placement:
+
+- Desktop: compact player sits beside the five-node navigation rail.
+- Mobile: compact player is fixed below the header so the sticky bottom chapter card stays short.
+- The production player uses fixed ElevenLabs MP3 files from `assets/audio/` for consistent voice quality.
+- ElevenLabs audio can be generated locally with `npm run audio:elevenlabs` after setting `ELEVENLABS_API_KEY`. Output files are written to `assets/audio/`.
+
 ## Interaction Design
 
 The site has two primary modes:
@@ -109,12 +118,13 @@ Explore Mode:
 - Drag uses pointer events, so mouse, trackpad, stylus, and touch-capable browsers share the same interaction model.
 - Click and drag are separated by a movement threshold to avoid accidental node selection.
 - When a different object is selected, orbit rotation is reset so the new object starts from its intended editorial camera angle.
+- The audio summary player can play, pause, resume, and switch between the five fixed MP3 chapter files.
 
 Object information:
 
 - Desktop shows the information panel on the right.
 - Mobile opens the information panel only when the user taps the bottom sticky node card.
-- Overview includes summary, key numbers, reality check, Deep dive, and Sources.
+- Overview includes summary, key numbers, reality check, Deep dive, public-company examples, and Sources.
 - Industry and Engineering tabs provide compact bullet lists.
 
 About interaction:
@@ -233,7 +243,7 @@ Editorial inputs currently referenced by the site:
 - NASA Commercial Space: `https://www.nasa.gov/humans-in-space/commercial-space/`
 - NASA Low Earth Orbit Economy: `https://www.nasa.gov/humans-in-space/commercial-space/low-earth-orbit-economy/`
 - WEF Clear Orbit, Secure Future, 2026.
-- User-provided SpaceX EU Prospectus, June 5, 2026.
+- SpaceX company disclosure materials, June 2026.
 - FHILY / Three.js cinematic hero reference: `https://x.com/Oluwaphilemon1/status/2066394029076435318`
 
 When publishing externally, independently verify market figures and label company-disclosed forecasts as company disclosures or expectations.
@@ -263,6 +273,32 @@ Run tests:
 ```bash
 npm test
 ```
+
+Generate ElevenLabs voice files:
+
+```bash
+export ELEVENLABS_API_KEY="your_api_key_here"
+npm run audio:elevenlabs
+```
+
+Default voice IDs:
+
+- English: `lxYfHSkYm1EzQzGhdbfc`
+- Traditional Chinese: `MNwNcuqILoUHnUG7B9kO`
+
+Expected output:
+
+- `assets/audio/en-launch-site.mp3`
+- `assets/audio/en-rocket.mp3`
+- `assets/audio/en-satellite.mp3`
+- `assets/audio/en-space-station.mp3`
+- `assets/audio/en-applications.mp3`
+- `assets/audio/zh-launch-site.mp3`
+- `assets/audio/zh-rocket.mp3`
+- `assets/audio/zh-satellite.mp3`
+- `assets/audio/zh-space-station.mp3`
+- `assets/audio/zh-applications.mp3`
+- `assets/audio/manifest.json`
 
 Verify static files:
 
