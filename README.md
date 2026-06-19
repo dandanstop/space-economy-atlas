@@ -220,6 +220,8 @@ Accessibility and semantics:
 - `scripts/serve.mjs`: local development server.
 - `scripts/verify-static.mjs`: static structure verification.
 - `scripts/verify-browser.cjs`: automated desktop/mobile/fallback browser verification.
+- `cloudflare/space-economy-proxy.js`: Cloudflare Worker proxy for the production subpath.
+- `wrangler.jsonc`: Cloudflare Worker route and deployment configuration.
 - `test/content.test.mjs`: content schema and editorial source tests.
 - `test/state.test.mjs`: state transition tests.
 
@@ -334,3 +336,63 @@ Post-deploy checks:
 - Confirm `https://dandanstop.me/space-economy/sitemap.xml` loads.
 - Confirm the 3D scene renders on desktop and mobile.
 - Confirm GA4 receives production page views for `/space-economy`.
+
+## Cloudflare Worker Route
+
+The public production URL is served through a Cloudflare Worker route:
+
+```text
+dandanstop.me/space-economy*
+```
+
+The Worker proxies requests to:
+
+```text
+https://space-economy-atlas.vercel.app
+```
+
+Cloudflare configuration:
+
+- Worker name: `space-economy-proxy`.
+- Worker source: `cloudflare/space-economy-proxy.js`.
+- Wrangler config: `wrangler.jsonc`.
+- Route pattern: `dandanstop.me/space-economy*`.
+- Zone name: `dandanstop.me`.
+
+The Worker injects:
+
+```html
+<base href="/space-economy/">
+```
+
+This keeps relative app assets such as `./src/main.js`, `./src/styles.css`, and Three.js import-map URLs under the `/space-economy/` subpath when served from `dandanstop.me`.
+
+Cloudflare commands:
+
+```bash
+npm run cf:whoami
+npm run cf:dry-run
+npm run cf:deploy
+```
+
+Post-deploy checks:
+
+```bash
+curl -I https://dandanstop.me/space-economy
+curl -I https://dandanstop.me/space-economy/og-image.png
+curl -I https://dandanstop.me/space-economy/src/main.js
+curl -I https://dandanstop.me/space-economy/node_modules/three/build/three.module.js
+```
+
+Expected headers:
+
+```text
+HTTP/2 200
+x-space-economy-proxy: cloudflare-worker
+```
+
+Troubleshooting:
+
+- `522` from `dandanstop.me/space-economy` usually means Cloudflare is still routing to a broken origin or an outdated Worker.
+- Wrangler will reject deployment if another Worker owns `dandanstop.me/space-economy*`.
+- The previous conflicting Worker was `wild-term-9a52`; it was removed so `space-economy-proxy` could own the route.

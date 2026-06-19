@@ -44,6 +44,9 @@ This project follows a maintenance-friendly format inspired by Keep a Changelog,
 - Added `npm run vercel:build` to verify and prepare the static `dist` output for Vercel.
 - Added `.vercelignore` to keep test artifacts and local documentation out of deployment uploads.
 - Added deployment-generated directories to `.gitignore`.
+- Added Cloudflare Wrangler CLI scripts for Worker login, dry-run, deploy, and account checks.
+- Added Cloudflare Worker proxy configuration for `dandanstop.me/space-economy*`.
+- Added Worker HTML base-path injection so relative assets load correctly under the `/space-economy/` subpath.
 - Added GA4 tracking with Measurement ID `G-2CJ15FLWPY`.
 - Added project-level analytics parameters: `project_slug: space-economy` and `project_name: Space Economy`.
 - Added fixed GA4 page path `/space-economy` and production page location `https://dandanstop.me/space-economy`.
@@ -149,6 +152,7 @@ This project follows a maintenance-friendly format inspired by Keep a Changelog,
 - Expanded verification to check `og:image`, `twitter:image`, and `summary_large_image`.
 - Expanded verification to check GA4 Measurement ID, fixed page path, project parameters, and local tracking guard.
 - Expanded static verification to check the Vercel build command, output directory, redirect, and `/space-economy` rewrites.
+- Verified Cloudflare Worker proxy responses for the production page, OG image, CSS, main JavaScript, Three.js runtime, and sitemap.
 - Added generated browser verification report output under `artifacts/verify-browser.json`.
 
 ### Maintenance Notes
@@ -164,3 +168,5 @@ This project follows a maintenance-friendly format inspired by Keep a Changelog,
 - Before publishing externally, re-verify all market figures and long-term projections.
 - Run `npm test`, `npm run build`, and `npm run verify:browser` after behavior, content, layout, or 3D interaction changes.
 - Run `npm run vercel:build` before Vercel deployment so the generated `dist` output includes the Three.js runtime files required by the import map.
+- Run `npm run cf:dry-run` before Cloudflare Worker deployment, then `npm run cf:deploy` to update the `dandanstop.me/space-economy*` route.
+- If Wrangler reports that a route is assigned to another Worker, remove the conflicting Worker or route before deploying `space-economy-proxy`.
