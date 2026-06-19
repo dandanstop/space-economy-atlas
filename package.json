@@ -9,10 +9,16 @@
     "build": "node scripts/verify-static.mjs",
     "vercel:build": "npm run build && node scripts/build-vercel.mjs",
     "test": "node --test",
-    "verify:browser": "node scripts/verify-browser.cjs"
+    "verify:browser": "node scripts/verify-browser.cjs",
+    "cf:wrangler": "WRANGLER_LOG_PATH=.wrangler/logs wrangler",
+    "cf:login": "WRANGLER_LOG_PATH=.wrangler/logs wrangler login",
+    "cf:whoami": "WRANGLER_LOG_PATH=.wrangler/logs wrangler whoami",
+    "cf:deploy": "WRANGLER_LOG_PATH=.wrangler/logs wrangler deploy"
   },
   "dependencies": {
     "three": "^0.165.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "wrangler": "^4.102.0"
+  }
 }
