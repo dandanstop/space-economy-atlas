@@ -279,10 +279,10 @@ export const pageCopy = {
       titlePrefix: "Curated by",
       titleName: "DanDanStop",
       body: [
-        "Hi, the name DanDanStop is actually an internal warning to myself: \"DanDan, stop me from pulling another all-nighter geeking out over new tech!\"",
-        "This is my personal tech lab and hub for inspiration, driven by a \"move fast and iterate\" agile mindset.",
-        "I\u2019m always hands-on, testing the latest AI tools and MarTech experiments just for fun.",
-        "Always happy to exchange ideas, discuss innovation, or explore new opportunities\u2014feel free to get in touch. \ud83d\ude0e"
+        "Hi - DanDanStop is basically a note-to-self: \"DanDan, stop before this turns into another all-nighter geeking out over new tech.\"",
+        "This is my personal tech lab and inspiration hub, built around a simple mindset: move fast, stay curious, and keep iterating.",
+        "I\u2019m usually hands-on, testing the latest AI tools, MarTech ideas, and little experiments just for fun.",
+        "If something here sparks an idea, let\u2019s talk. I\u2019m always happy to swap thoughts on innovation, creative technology, and what might be worth building next."
       ],
       lastUpdated: "Last updated: June 2026",
       contactLabel: "Contact",
@@ -295,7 +295,7 @@ export const pageCopy = {
       title: "值得探索的太空公司",
       intro: "探索不同公司如何建置發射、衛星、太空站與下游服務基礎設施。",
       private: "未上市公司",
-      public: "上市公司"
+      public: "掛牌公司"
     },
     expertPerspective: "專家觀點",
     governmentPrograms: "全球政府計畫",
@@ -344,10 +344,10 @@ export const pageCopy = {
       titlePrefix: "Curated by",
       titleName: "DanDanStop",
       body: [
-        "Hi, the name DanDanStop is actually an internal warning to myself: \"DanDan, stop me from pulling another all-nighter geeking out over new tech!\"",
-        "This is my personal tech lab and hub for inspiration, driven by a \"move fast and iterate\" agile mindset.",
-        "I\u2019m always hands-on, testing the latest AI tools and MarTech experiments just for fun.",
-        "Always happy to exchange ideas, discuss innovation, or explore new opportunities\u2014feel free to get in touch. \ud83d\ude0e"
+        "Hi - DanDanStop is basically a note-to-self: \"DanDan, stop before this turns into another all-nighter geeking out over new tech.\"",
+        "This is my personal tech lab and inspiration hub, built around a simple mindset: move fast, stay curious, and keep iterating.",
+        "I\u2019m usually hands-on, testing the latest AI tools, MarTech ideas, and little experiments just for fun.",
+        "If something here sparks an idea, let\u2019s talk. I\u2019m always happy to swap thoughts on innovation, creative technology, and what might be worth building next."
       ],
       lastUpdated: "Last updated: June 2026",
       contactLabel: "Contact",
@@ -360,7 +360,7 @@ export const pageCopy = {
       title: "Companies to Explore",
       intro: "Explore how different companies build launch, satellite, station, and downstream infrastructure.",
       private: "Private companies",
-      public: "Public companies"
+      public: "Listed companies"
     },
     expertPerspective: "Expert Perspective",
     governmentPrograms: "Government Programs",
@@ -928,7 +928,8 @@ export const editorialLayers = {
       companyExamples: [
         {
           name: "SpaceX",
-          status: "private",
+          status: "public",
+          ticker: "SPCX",
           role: "可探索高頻發射、發射場週轉、載具回收與垂直整合如何支撐大型星座與深空任務。",
           url: "https://www.spacex.com/"
         },
@@ -1032,7 +1033,8 @@ export const editorialLayers = {
       companyExamples: [
         {
           name: "SpaceX",
-          status: "private",
+          status: "public",
+          ticker: "SPCX",
           role: "Shows how high-cadence launch, pad turnaround, vehicle recovery, and vertical integration support large constellations and deep-space ambitions.",
           url: "https://www.spacex.com/"
         },
@@ -1138,7 +1140,8 @@ export const editorialLayers = {
       companyExamples: [
         {
           name: "SpaceX",
-          status: "private",
+          status: "public",
+          ticker: "SPCX",
           role: "可探索 Falcon、Starship、可回收發射與 Starlink 垂直整合如何改變軌道物流想像。",
           url: "https://www.spacex.com/"
         },
@@ -1273,7 +1276,8 @@ export const editorialLayers = {
       companyExamples: [
         {
           name: "SpaceX",
-          status: "private",
+          status: "public",
+          ticker: "SPCX",
           role: "Shows how Falcon, Starship, reusable launch, and Starlink vertical integration reshape the idea of orbital logistics.",
           url: "https://www.spacex.com/"
         },
@@ -1409,8 +1413,9 @@ export const editorialLayers = {
       },
       companyExamples: [
         {
-          name: "Starlink",
-          status: "private",
+          name: "Starlink (SpaceX)",
+          status: "public",
+          ticker: "SPCX",
           role: "可探索大型低軌星座如何把衛星硬體轉成寬頻、行動連線與全球覆蓋服務。",
           url: "https://www.starlink.com/"
         },
@@ -1522,8 +1527,9 @@ export const editorialLayers = {
       },
       companyExamples: [
         {
-          name: "Starlink",
-          status: "private",
+          name: "Starlink (SpaceX)",
+          status: "public",
+          ticker: "SPCX",
           role: "Shows how a large LEO constellation turns satellites into broadband, mobile connectivity, and global coverage services.",
           url: "https://www.starlink.com/"
         },
@@ -1889,8 +1895,9 @@ export const editorialLayers = {
       },
       companyExamples: [
         {
-          name: "Starlink",
-          status: "private",
+          name: "Starlink (SpaceX)",
+          status: "public",
+          ticker: "SPCX",
           role: "可探索衛星寬頻、行動網路合作、直連手機與全球覆蓋如何轉化為日常服務。",
           url: "https://www.starlink.com/"
         },
@@ -2017,8 +2024,9 @@ export const editorialLayers = {
       },
       companyExamples: [
         {
-          name: "Starlink",
-          status: "private",
+          name: "Starlink (SpaceX)",
+          status: "public",
+          ticker: "SPCX",
           role: "Shows how satellite broadband, mobile-network partnerships, direct-to-device links, and global coverage become everyday services.",
           url: "https://www.starlink.com/"
         },

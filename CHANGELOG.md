@@ -6,6 +6,12 @@ This project follows a maintenance-friendly format inspired by Keep a Changelog,
 
 ## [Unreleased] - 2026-06-20
 
+### Added
+
+- Added the DanDanStop amber profile mark to the About dialog as a low-profile author identifier.
+- Added `llms.txt`, `llms-full.txt`, and `humans.txt` so the project has AI-readable and maintainer-readable public metadata endpoints.
+- Added deeper GA4 engagement tracking for chapter quality, audio progress, and About reading duration.
+
 ### Changed
 
 - Raised `Future Signals` from an internal Deep dive subsection to its own Overview disclosure above company exploration.
@@ -24,6 +30,19 @@ This project follows a maintenance-friendly format inspired by Keep a Changelog,
 - Replaced the always-visible `EN / 中文` switcher with a compact current-language dropdown that defaults to `EN` and opens on demand.
 - Fixed mobile audio playlist selection so changing a narration segment also moves the scroll-driven mobile chapter state and 3D focus to the matching node.
 - Updated content tests so private companies do not require tickers, while public companies still include them when available.
+- Refined the About dialog author mark sizing, spacing, and corner radius so it reads as a subtle signature instead of a hero visual.
+- Updated the page title, `og:title`, and `twitter:title` to `Space Economy Atlas | A visual guide to how space infrastructure works`.
+- Bumped production asset version strings after deployment so the public Cloudflare-served site would fetch the updated About dialog JavaScript and CSS instead of stale cached assets.
+- Expanded the Vercel build output so `llms.txt`, `llms-full.txt`, and `humans.txt` are included in the deployed static package instead of being left out of `dist`.
+- Updated the Cloudflare Worker route configuration to support both `dandanstop.me/space-economy*` and `www.dandanstop.me/space-economy*`, and changed the Worker to derive the public host dynamically instead of assuming only the bare domain.
+
+### Maintenance Notes
+
+- When production HTML is updated but the visible UI still looks old, compare the live `index.html` asset query strings against the expected `main.js`, nested content modules, and `styles.css` versions before assuming the deploy failed.
+- For Vercel plus Cloudflare subpath launches, a fresh asset version string can resolve stale UI faster than repeated cache purges when HTML and runtime files are out of sync.
+- When adding new public metadata files, verify both the build script and deployed subpath URLs. In this project, files can exist in the repo but still 404 in production if `scripts/build-vercel.mjs` does not copy them into `dist`.
+- For Worker-based subpath projects on `dandanstop.me/xxxx`, make sure both the apex record and `www` record are set to `Proxied` in Cloudflare. If either host stays `DNS only`, traffic bypasses Cloudflare, the Worker never runs, and the subpath can fall through to Vercel `404 NOT_FOUND`.
+- When one hostname works and the other does not, compare the response headers first. `x-space-economy-proxy: cloudflare-worker` indicates the Worker is handling the request; a plain Vercel `404` usually means the hostname is bypassing Cloudflare or the matching Worker route is missing.
 
 ## [0.1.0] - 2026-06-19
 

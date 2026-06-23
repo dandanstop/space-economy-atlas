@@ -8,7 +8,10 @@ const files = [
   "index.html",
   "og-image.png",
   "robots.txt",
-  "sitemap.xml"
+  "sitemap.xml",
+  "llms.txt",
+  "llms-full.txt",
+  "humans.txt"
 ];
 
 const directories = [

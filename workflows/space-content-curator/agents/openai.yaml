@@ -1,0 +1,4 @@
+interface:
+  display_name: "Space Content Curator"
+  short_description: "Curate educational space industry web content"
+  default_prompt: "Use $space-content-curator to turn trusted space-industry sources into structured educational website content."

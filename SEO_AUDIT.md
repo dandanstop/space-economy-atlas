@@ -8,6 +8,18 @@ Production URL: `https://dandanstop.me/space-economy`
 
 Scope: single-page interactive 3D educational site, English default with Traditional Chinese language switching.
 
+## SEO And GEO Snapshot
+
+SEO status:
+
+- solid technical baseline for a single-page educational site
+- canonical, sitemap, robots, Open Graph, Twitter, and JSON-LD already present
+
+GEO status:
+
+- partially ready after adding AI-readable project summary files
+- still limited by the fact that most educational depth lives inside interactive UI rather than separate crawlable chapter pages
+
 ## Executive Summary
 
 The site has a strong interactive concept and useful educational content, but the first audit found that the SEO foundation was thin because the original static HTML contained little indexable content and no structured metadata beyond a basic title and description.
@@ -29,6 +41,12 @@ The biggest remaining SEO decisions are:
 
 - Hreflang alternates.
 - HTTPS and production caching headers.
+
+The biggest GEO decisions are:
+
+- whether to publish chapter-level static explainer pages for AI and search retrieval
+- how much editorial summary should be mirrored outside the interactive UI
+- whether to maintain `llms.txt` and `llms-full.txt` as part of the regular content workflow
 
 ## Current SEO Health
 
@@ -155,7 +173,7 @@ Cinematic Space Economy Atlas
 Updated title:
 
 ```text
-Space Economy Atlas | 3D Guide to Space Infrastructure
+Space Economy Atlas | A visual guide to how space infrastructure works
 ```
 
 Previous description mentioned ground stations even though the node changed to space stations.
@@ -295,6 +313,27 @@ Validation checklist after deployment:
 2. Add a glossary for terms such as LEO, mass to orbit, constellation, debris mitigation, direct-to-device, and orbital services.
 3. Add source-backed explainers for NASA LEO economy, orbital sustainability, and reusable launch economics.
 4. Add internal links from the atlas page to those supporting pages.
+
+## GEO Recommendations
+
+### Quick Wins Added
+
+- add `llms.txt` as a compact AI-readable summary
+- add `llms-full.txt` as a more detailed AI-readable project brief
+- add `humans.txt` as a lightweight maintainer and attribution file
+
+### Why This Helps
+
+- AI systems can understand the site purpose, scope, audience, and citation boundaries faster
+- the project can communicate that it is educational rather than investment-oriented
+- source-family expectations become clearer for future summarization systems
+
+### Next GEO Opportunities
+
+1. Publish static chapter summaries for each of the five core nodes.
+2. Add a crawlable glossary page for key industry terms.
+3. Add a concise editorial methodology page covering source standards and update cadence.
+4. Expose a clearer source directory or bibliography page if the site becomes a recurring reference resource.
 
 ## Verification
 

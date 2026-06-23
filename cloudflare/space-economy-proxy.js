@@ -1,7 +1,5 @@
 const UPSTREAM_ORIGIN = "https://space-economy-atlas.vercel.app";
 const PROJECT_PATH = "/space-economy";
-const PUBLIC_ORIGIN = "https://dandanstop.me";
-
 function isProjectPath(pathname) {
   return pathname === PROJECT_PATH || pathname.startsWith(`${PROJECT_PATH}/`);
 }
@@ -10,7 +8,11 @@ function buildUpstreamUrl(incomingUrl) {
   return new URL(incomingUrl.pathname + incomingUrl.search, UPSTREAM_ORIGIN);
 }
 
-function buildForwardHeaders(request) {
+function isMutableSourceAsset(pathname) {
+  return /^\/space-economy\/src\/.+\.(js|css)$/.test(pathname);
+}
+
+function buildForwardHeaders(request, incomingUrl) {
   const forwarded = new Headers();
 
   for (const key of [
@@ -26,13 +28,13 @@ function buildForwardHeaders(request) {
     if (value) forwarded.set(key, value);
   }
 
-  forwarded.set("x-forwarded-host", "dandanstop.me");
+  forwarded.set("x-forwarded-host", incomingUrl.hostname);
   forwarded.set("x-forwarded-proto", "https");
 
   return forwarded;
 }
 
-function rewriteRedirectLocation(location) {
+function rewriteRedirectLocation(location, incomingUrl) {
   if (!location) return location;
 
   const upstreamLocation = new URL(location, UPSTREAM_ORIGIN);
@@ -40,7 +42,7 @@ function rewriteRedirectLocation(location) {
     return location;
   }
 
-  return `${PUBLIC_ORIGIN}${upstreamLocation.pathname}${upstreamLocation.search}`;
+  return `${incomingUrl.origin}${upstreamLocation.pathname}${upstreamLocation.search}`;
 }
 
 async function rewriteHtmlResponse(upstreamResponse, responseHeaders) {
@@ -98,17 +100,22 @@ export default {
     const upstreamUrl = buildUpstreamUrl(incomingUrl);
     const upstreamResponse = await fetch(upstreamUrl.toString(), {
       method: request.method,
-      headers: buildForwardHeaders(request),
+      headers: buildForwardHeaders(request, incomingUrl),
       redirect: "manual"
     });
 
     const responseHeaders = new Headers(upstreamResponse.headers);
     responseHeaders.set("x-space-economy-proxy", "cloudflare-worker");
 
+    if (isMutableSourceAsset(incomingUrl.pathname)) {
+      responseHeaders.set("cache-control", "no-store");
+      responseHeaders.delete("etag");
+    }
+
     if (responseHeaders.has("location")) {
       responseHeaders.set(
         "location",
-        rewriteRedirectLocation(responseHeaders.get("location"))
+        rewriteRedirectLocation(responseHeaders.get("location"), incomingUrl)
       );
     }
 

@@ -6,6 +6,9 @@ const required = [
   "vercel.json",
   "robots.txt",
   "sitemap.xml",
+  "llms.txt",
+  "llms-full.txt",
+  "humans.txt",
   "scripts/build-vercel.mjs",
   "src/analytics.js",
   "src/main.js",
@@ -23,8 +26,11 @@ const html = await readFile("index.html", "utf8");
 const analytics = await readFile("src/analytics.js", "utf8");
 const robots = await readFile("robots.txt", "utf8");
 const sitemap = await readFile("sitemap.xml", "utf8");
+const llms = await readFile("llms.txt", "utf8");
+const llmsFull = await readFile("llms-full.txt", "utf8");
+const humans = await readFile("humans.txt", "utf8");
 const vercelConfig = JSON.parse(await readFile("vercel.json", "utf8"));
-const productionUrl = "https://dandanstop.me/space-economy";
+const productionUrl = "https://www.dandanstop.me/space-economy";
 const productionImage = `${productionUrl}/og-image.png`;
 const requiredIds = [
   "app",
@@ -49,7 +55,7 @@ for (const id of requiredIds) {
 }
 
 const requiredSeoSnippets = [
-  "<title>Space Economy Atlas | 3D Guide to Space Infrastructure</title>",
+  "<title>Space Economy Atlas | A visual guide to how space infrastructure works</title>",
   'name="description"',
   'name="robots"',
   'property="og:title"',
@@ -74,7 +80,7 @@ for (const snippet of requiredSeoSnippets) {
 const requiredAnalyticsSnippets = [
   'GA_MEASUREMENT_ID = "G-2CJ15FLWPY"',
   'ANALYTICS_PATH = "/space-economy"',
-  'ANALYTICS_LOCATION = "https://dandanstop.me/space-economy"',
+  'ANALYTICS_LOCATION = "https://www.dandanstop.me/space-economy"',
   'project_slug: "space-economy"',
   'project_name: "Space Economy"',
   "googletagmanager.com/gtag/js",
@@ -98,6 +104,18 @@ if (!robots.includes(`Sitemap: ${productionUrl}/sitemap.xml`)) {
 
 if (!sitemap.includes(`<loc>${productionUrl}</loc>`)) {
   throw new Error("sitemap.xml must include the production URL.");
+}
+
+if (!llms.includes("# Space Economy Atlas") || !llms.includes(productionUrl)) {
+  throw new Error("llms.txt must include the project title and canonical production URL.");
+}
+
+if (!llmsFull.includes("Full AI-Readable Summary") || !llmsFull.includes(productionUrl)) {
+  throw new Error("llms-full.txt must include the detailed AI summary and production URL.");
+}
+
+if (!humans.includes("Curated by: DanDanStop") || !humans.includes(productionUrl)) {
+  throw new Error("humans.txt must include maintainer attribution and production URL.");
 }
 
 if (vercelConfig.buildCommand !== "npm run vercel:build") {

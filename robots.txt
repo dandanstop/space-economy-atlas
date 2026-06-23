@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://dandanstop.me/space-economy/sitemap.xml
+Sitemap: https://www.dandanstop.me/space-economy/sitemap.xml
+
+# AI-readable project summaries
+# https://www.dandanstop.me/space-economy/llms.txt

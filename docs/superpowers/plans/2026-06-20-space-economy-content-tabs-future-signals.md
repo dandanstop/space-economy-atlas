@@ -24,7 +24,7 @@ Current working tree note: `src/main.js`, `README.md`, and `CHANGELOG.md` alread
 ### Task 1: Add Content Tests
 
 **Files:**
-- Modify: `/Users/daniel/Documents/Playground/space-economy-atlas/test/content.test.mjs`
+- Modify: `/Users/daniel/Projects/space-economy-atlas/test/content.test.mjs`
 
 - [ ] **Step 1: Add failing tests for new tab labels and future signals**
 
@@ -74,8 +74,8 @@ Expected: FAIL because `Industry`, `Engineering`, and `futureSignals` are still 
 ### Task 2: Update Content Data
 
 **Files:**
-- Modify: `/Users/daniel/Documents/Playground/space-economy-atlas/src/data/content.js`
-- Test: `/Users/daniel/Documents/Playground/space-economy-atlas/test/content.test.mjs`
+- Modify: `/Users/daniel/Projects/space-economy-atlas/src/data/content.js`
+- Test: `/Users/daniel/Projects/space-economy-atlas/test/content.test.mjs`
 
 - [ ] **Step 1: Rename detail tab labels**
 
@@ -418,8 +418,8 @@ Expected: PASS.
 ### Task 3: Render Future Signals in Deep Dive
 
 **Files:**
-- Modify: `/Users/daniel/Documents/Playground/space-economy-atlas/src/main.js`
-- Modify: `/Users/daniel/Documents/Playground/space-economy-atlas/src/styles.css`
+- Modify: `/Users/daniel/Projects/space-economy-atlas/src/main.js`
+- Modify: `/Users/daniel/Projects/space-economy-atlas/src/styles.css`
 
 - [ ] **Step 1: Update `renderDeepDive(editorial)`**
 

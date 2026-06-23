@@ -12,6 +12,18 @@ For SEO findings and launch recommendations, see [SEO_AUDIT.md](./SEO_AUDIT.md).
 
 For GA4 tracking details, see [ANALYTICS.md](./ANALYTICS.md).
 
+For the project workflow index, see [workflows/README.md](./workflows/README.md).
+
+For the editorial operations runbook, see [docs/content-ops-runbook.md](./docs/content-ops-runbook.md).
+
+For the monthly update checklist template, see [docs/monthly-content-checklist-template.md](./docs/monthly-content-checklist-template.md).
+
+For the multi-project subpath launch checklist, see [docs/subpath-launch-checklist.md](./docs/subpath-launch-checklist.md).
+
+For the project-local editorial workflow guide, see [docs/space-content-curator.md](./docs/space-content-curator.md).
+
+For the project-local signal-triage workflow guide, see [docs/latest-signals-pipeline.md](./docs/latest-signals-pipeline.md).
+
 ## Editorial Direction
 
 The site should communicate the space economy as an infrastructure system, not as isolated hardware.
@@ -62,6 +74,7 @@ The page follows a progressive disclosure structure:
 Current About content:
 
 - Title breaks into two lines: "Curated by" and "DanDanStop".
+- Includes a low-profile DanDanStop amber profile mark as an author identifier, not as a page hero element.
 - Contact link uses `mailto:hello@dandanstop.me`.
 - Last updated: June 2026.
 - The Contact link visually matches the About body copy in font size and color tone.
@@ -248,6 +261,13 @@ Accessibility and semantics:
 - `cloudflare/space-economy-proxy.js`: Cloudflare Worker proxy for the production subpath.
 - `wrangler.jsonc`: Cloudflare Worker route and deployment configuration.
 - `test/content.test.mjs`: content schema and editorial source tests.
+
+## Deployment Notes
+
+- Deploy production with `vercel --prod --yes`.
+- After deployment, verify `https://dandanstop.me/space-economy` instead of relying on the build log alone.
+- If the public page serves old UI, inspect the live HTML and confirm that `index.html`, `main.js`, nested content modules, and `styles.css` all point to the same current asset version string.
+- In this Vercel plus Cloudflare setup, a clean asset version bump is often more reliable than repeated cache purges when HTML and runtime assets drift apart.
 - `test/state.test.mjs`: state transition tests.
 
 ## Source Notes

@@ -8,7 +8,7 @@ const { pathToFileURL } = require("node:url");
 const projectRoot = path.resolve(__dirname, "..");
 const artifactsDir = path.join(projectRoot, "artifacts");
 const reportPath = path.join(artifactsDir, "verify-browser.json");
-const productionUrl = "https://dandanstop.me/space-economy";
+const productionUrl = "https://www.dandanstop.me/space-economy";
 const productionImage = `${productionUrl}/og-image.png`;
 
 function sleep(ms) {

@@ -260,6 +260,21 @@ p {
   padding: 28px;
 }
 
+.about-dialog__header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 40px 18px 0;
+}
+
+.about-dialog__mark {
+  flex: 0 0 auto;
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
 .about-dialog__close {
   position: absolute;
   top: 14px;
@@ -280,7 +295,7 @@ p {
 .about-dialog__title {
   display: grid;
   gap: 3px;
-  margin: 0 40px 18px 0;
+  margin: 0;
   font-size: 30px;
   line-height: 1;
   letter-spacing: 0;
@@ -1337,6 +1352,17 @@ p {
 
   .about-dialog__surface {
     padding: 24px 20px;
+  }
+
+  .about-dialog__header {
+    gap: 12px;
+    margin-right: 40px;
+  }
+
+  .about-dialog__mark {
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
   }
 
   .about-dialog__title {

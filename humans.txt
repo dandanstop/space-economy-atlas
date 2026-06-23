@@ -1,0 +1,19 @@
+/* TEAM */
+Curated by: DanDanStop
+Contact: hello@dandanstop.me
+Site: https://www.dandanstop.me/space-economy
+
+/* PROJECT */
+Name: Space Economy Atlas
+Type: Interactive 3D educational website
+Primary language: English
+Additional language: Traditional Chinese
+Stack: HTML, CSS, JavaScript, Three.js, Vercel, Cloudflare Worker
+
+/* FOCUS */
+Topic: Space economy infrastructure
+Chapters: Launch Site, Rocket, Satellite, Space Station, Applications
+Approach: Educational, source-backed, English-first, not investment advice
+
+/* UPDATED */
+Last updated: 2026-06-20

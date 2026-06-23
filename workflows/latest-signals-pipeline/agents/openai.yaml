@@ -1,0 +1,4 @@
+interface:
+  display_name: "Latest Signals Pipeline"
+  short_description: "Collect and triage space update signals"
+  default_prompt: "Use $latest-signals-pipeline to collect and prepare recent space-industry signals for editorial review."

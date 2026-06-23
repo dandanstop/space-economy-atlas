@@ -1,6 +1,6 @@
 export const GA_MEASUREMENT_ID = "G-2CJ15FLWPY";
 export const ANALYTICS_PATH = "/space-economy";
-export const ANALYTICS_LOCATION = "https://dandanstop.me/space-economy";
+export const ANALYTICS_LOCATION = "https://www.dandanstop.me/space-economy";
 export const PROJECT_ANALYTICS_PARAMS = {
   project_slug: "space-economy",
   project_name: "Space Economy"

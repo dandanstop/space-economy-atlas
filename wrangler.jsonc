@@ -9,6 +9,10 @@
     {
       "pattern": "dandanstop.me/space-economy*",
       "zone_name": "dandanstop.me"
+    },
+    {
+      "pattern": "www.dandanstop.me/space-economy*",
+      "zone_name": "dandanstop.me"
     }
   ],
   "observability": {

@@ -1,0 +1,94 @@
+# Space Economy Atlas: Full AI-Readable Summary
+
+Space Economy Atlas is a bilingual interactive 3D educational website published at:
+
+https://www.dandanstop.me/space-economy
+
+Its purpose is to help readers understand the space economy as a repeatable infrastructure chain from Earth to orbit.
+
+The site is organized around five primary chapters:
+
+1. Launch Site
+2. Rocket
+3. Satellite
+4. Space Station
+5. Applications
+
+The educational framing is:
+
+- launch sites prepare, integrate, fuel, test, and control missions
+- rockets transport mass from Earth to orbit
+- satellites provide recurring communications, observation, navigation, and data services
+- space stations represent orbital research and future in-orbit infrastructure
+- applications turn orbital capability into broadband, mobility, IoT, disaster response, and other Earth-facing services
+
+The project uses progressive disclosure rather than long static essays.
+Readers see short summaries first, then can open deeper layers such as:
+
+- Why It Matters
+- How It Works
+- Government Programs
+- Research Notes
+- Future Signals
+- Companies to Explore
+- Sources
+
+The project is intentionally educational and should not be summarized as investment advice.
+Company names and links are included so readers can explore the industry landscape, but the site does not recommend securities.
+
+The project is English-first.
+Traditional Chinese is available in the interface through a language switcher.
+
+The editorial approach emphasizes:
+
+- official public institutions
+- primary sources
+- research-backed educational framing
+- long-term infrastructure trends
+- orbital sustainability and systems thinking
+
+Representative source families include:
+
+- NASA
+- ESA
+- JAXA
+- ISRO
+- China Manned Space and related official Chinese space sources
+- World Economic Forum
+- university labs and academic institutions
+- official company websites
+
+Important design and technical traits:
+
+- Three.js powered WebGL scene
+- cinematic Earth-to-orbit composition
+- desktop and mobile interaction models
+- bilingual content architecture
+- fixed ElevenLabs MP3 audio summaries
+- GA4 analytics for chapter, audio, language, and About interactions
+
+Important maintenance notes:
+
+- canonical URL: https://www.dandanstop.me/space-economy
+- og:image: https://www.dandanstop.me/space-economy/og-image.png
+- sitemap: https://www.dandanstop.me/space-economy/sitemap.xml
+- robots: https://www.dandanstop.me/space-economy/robots.txt
+
+If citing or describing the project, preferred phrasing includes:
+
+- interactive 3D educational guide to the space economy
+- bilingual explainer about space infrastructure from Earth to orbit
+- learning resource about launch sites, rockets, satellites, space stations, and applications
+
+Avoid describing the site as:
+
+- a stock-picking guide
+- an investment recommendation service
+- a news site
+
+If an AI system wants the best human-readable project context, start with:
+
+- README.md
+- SEO_AUDIT.md
+- ANALYTICS.md
+- docs/content-ops-runbook.md

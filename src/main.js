@@ -7,7 +7,7 @@ import {
   languages,
   latestSignals,
   nodes
-} from "./data/content.js?v=20260620-multilingual-signals";
+} from "./data/content.js?v=20260620-about-mark-v1";
 import {
   createInitialState,
   selectNode,
@@ -49,6 +49,13 @@ let mobileScrollObserverSuppressedUntil = 0;
 let audioSelectedNodeId = audioSummaries[0]?.nodeId ?? "launch-site";
 let audioStatus = "idle";
 let languageMenuOpen = false;
+let cardEngagementTimer = 0;
+let cardEngagementNodeId = "";
+let cardEngagementInteractionType = "unknown";
+let cardEngagementTracked = false;
+let cardDisclosureCount = 0;
+let aboutOpenedAt = 0;
+let trackedAudioProgressMarks = new Set();
 const audioElement = new Audio();
 audioElement.preload = "metadata";
 
@@ -67,6 +74,80 @@ function getNodeTrackingParams(nodeId, interactionType) {
     node_title: node?.copy?.[state.lang]?.title ?? "",
     language: state.lang
   };
+}
+
+function getDurationBucket(durationMs) {
+  if (durationMs < 5000) return "0_5s";
+  if (durationMs < 15000) return "5_15s";
+  return "15s_plus";
+}
+
+function clearCardEngagementTimer() {
+  if (!cardEngagementTimer) return;
+  window.clearTimeout(cardEngagementTimer);
+  cardEngagementTimer = 0;
+}
+
+function trackCardEngagement(trigger) {
+  if (!cardEngagementNodeId || cardEngagementTracked) return;
+  cardEngagementTracked = true;
+  clearCardEngagementTimer();
+  trackEvent("card_engaged", {
+    ...getNodeTrackingParams(cardEngagementNodeId, cardEngagementInteractionType),
+    engagement_trigger: trigger,
+    disclosure_count: cardDisclosureCount
+  });
+}
+
+function scheduleCardEngagement(nodeId, interactionType) {
+  clearCardEngagementTimer();
+  cardEngagementNodeId = nodeId;
+  cardEngagementInteractionType = interactionType;
+  cardEngagementTracked = false;
+  cardDisclosureCount = 0;
+
+  cardEngagementTimer = window.setTimeout(() => {
+    trackCardEngagement("time_10s");
+  }, 10000);
+}
+
+function registerCardDisclosureOpen() {
+  if (!cardEngagementNodeId || cardEngagementTracked || cardEngagementNodeId !== state.selectedNode) return;
+  cardDisclosureCount += 1;
+  if (cardDisclosureCount >= 2) {
+    trackCardEngagement("disclosure_depth");
+  }
+}
+
+function resetAudioProgressTracking() {
+  trackedAudioProgressMarks = new Set();
+}
+
+function getAudioProgressBucket() {
+  const duration = audioElement.duration;
+  const currentTime = audioElement.currentTime;
+  if (!Number.isFinite(duration) || duration <= 0 || currentTime <= 0) return null;
+
+  const progress = currentTime / duration;
+  if (progress >= 0.75 && !trackedAudioProgressMarks.has(75)) return 75;
+  if (progress >= 0.5 && !trackedAudioProgressMarks.has(50)) return 50;
+  if (progress >= 0.25 && !trackedAudioProgressMarks.has(25)) return 25;
+  return null;
+}
+
+function trackAboutClosed(closeMethod) {
+  const durationMs = aboutOpenedAt ? Math.max(0, Date.now() - aboutOpenedAt) : 0;
+  trackEvent("about_closed", {
+    close_method: closeMethod,
+    language: state.lang
+  });
+  trackEvent("about_duration_tracked", {
+    close_method: closeMethod,
+    duration_bucket: getDurationBucket(durationMs),
+    duration_ms: durationMs,
+    language: state.lang
+  });
+  aboutOpenedAt = 0;
 }
 
 function createButton({ className, text, pressed, disabled, dataset, onClick }) {
@@ -123,6 +204,7 @@ function renderDisclosure(title, content, modifier = "") {
   summary.textContent = title;
   summary.addEventListener("click", () => {
     if (!details.open) {
+      registerCardDisclosureOpen();
       trackEvent("content_disclosure_opened", {
         disclosure_title: title,
         node_id: state.selectedNode,
@@ -393,6 +475,7 @@ function resetAudio({ renderGuide = true } = {}) {
   audioElement.removeAttribute("src");
   audioElement.load();
   audioStatus = "idle";
+  resetAudioProgressTracking();
   if (renderGuide) renderAudioGuide(getCopy(state.lang));
 }
 
@@ -405,6 +488,7 @@ async function startAudio({ eventName = "audio_played", action = "played" } = {}
   if (audioElement.src !== audioUrl) {
     audioElement.src = audioUrl;
     audioElement.currentTime = 0;
+    resetAudioProgressTracking();
   }
 
   try {
@@ -558,6 +642,7 @@ function selectNodeInExplore(nodeId, { openPanel = false, interactionType = "unk
   const selected = setMode(selectNode(state, nodeId), "explore");
   maybeSyncAudioSegment(nodeId);
   setState(openPanel ? setMobilePanelOpen(selected, true) : selected);
+  scheduleCardEngagement(nodeId, interactionType);
   trackEvent("node_selected", getNodeTrackingParams(nodeId, interactionType));
 }
 
@@ -565,6 +650,7 @@ function openMobileNodePanel(nodeId, interactionType = "mobile_sticky_card") {
   const selected = setMode(selectNode(state, nodeId), "explore");
   maybeSyncAudioSegment(nodeId);
   setState(setMobilePanelOpen(selected, true));
+  scheduleCardEngagement(nodeId, interactionType);
   trackEvent("overview_opened", getNodeTrackingParams(nodeId, interactionType));
 }
 
@@ -632,6 +718,16 @@ function renderAbout(copy) {
   elements.aboutDialogClose.textContent = "\u00d7";
   elements.aboutDialogClose.setAttribute("aria-label", copy.about.close);
 
+  const header = document.createElement("div");
+  header.className = "about-dialog__header";
+
+  const mark = document.createElement("img");
+  mark.className = "about-dialog__mark";
+  mark.src = "./assets/dandan-stop-profile-amber.png";
+  mark.alt = "DanDanStop mark";
+  mark.width = 88;
+  mark.height = 88;
+
   const title = document.createElement("h2");
   title.id = "about-title";
   title.className = "about-dialog__title";
@@ -643,6 +739,7 @@ function renderAbout(copy) {
   name.textContent = copy.about.titleName;
 
   title.append(prefix, name);
+  header.append(mark, title);
 
   const body = document.createElement("div");
   body.className = "about-dialog__body";
@@ -669,7 +766,7 @@ function renderAbout(copy) {
     });
   });
 
-  elements.aboutDialogContent.replaceChildren(title, body, lastUpdated, contact);
+  elements.aboutDialogContent.replaceChildren(header, body, lastUpdated, contact);
 }
 
 function renderAudioGuide(copy) {
@@ -720,6 +817,7 @@ function renderAudioGuide(copy) {
 
 function openAboutDialog() {
   renderAbout(getCopy(state.lang));
+  aboutOpenedAt = Date.now();
   trackEvent("about_opened", {
     language: state.lang
   });
@@ -1069,27 +1167,32 @@ audioElement.addEventListener("ended", () => {
   audioStatus = "idle";
   renderAudioGuide(getCopy(state.lang));
   trackEvent("audio_completed", getAudioTrackingParams("completed"));
+  resetAudioProgressTracking();
 });
 audioElement.addEventListener("error", () => {
   audioStatus = "idle";
   renderAudioGuide(getCopy(state.lang));
   trackEvent("audio_error", getAudioTrackingParams("error"));
+  resetAudioProgressTracking();
+});
+audioElement.addEventListener("timeupdate", () => {
+  const progressMark = getAudioProgressBucket();
+  if (!progressMark) return;
+  trackedAudioProgressMarks.add(progressMark);
+  trackEvent("audio_progress", {
+    ...getAudioTrackingParams("progress"),
+    progress_percent: progressMark
+  });
 });
 elements.aboutLink.addEventListener("click", openAboutDialog);
 elements.aboutDialogClose.addEventListener("click", closeAboutDialog);
 elements.aboutDialogClose.addEventListener("click", () => {
-  trackEvent("about_closed", {
-    close_method: "button",
-    language: state.lang
-  });
+  trackAboutClosed("button");
 });
 elements.aboutDialog.addEventListener("click", (event) => {
   if (event.target === elements.aboutDialog) {
     closeAboutDialog();
-    trackEvent("about_closed", {
-      close_method: "backdrop",
-      language: state.lang
-    });
+    trackAboutClosed("backdrop");
   }
 });
 

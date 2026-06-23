@@ -1,0 +1,66 @@
+# Space Economy Atlas
+
+> Interactive 3D educational guide to how launch sites, rockets, satellites, space stations, and downstream applications form the space economy.
+
+## Canonical URL
+
+- [Production site](https://www.dandanstop.me/space-economy)
+
+## What this project is
+
+Space Economy Atlas is an English-first, bilingual educational website about the space economy.
+It explains the space economy as infrastructure, not as isolated hardware.
+
+The primary audience includes:
+
+- general readers curious about the space industry
+- students and educators
+- designers, strategists, and operators exploring space-industry systems
+- readers comparing launch, orbital infrastructure, and downstream services
+
+## Core topics
+
+- launch sites
+- rockets
+- satellites
+- space stations
+- downstream applications
+- orbital infrastructure
+- government programs
+- research notes
+- future signals in the space economy
+
+## Editorial approach
+
+- educational, not investment advice
+- English is the editorial source of truth
+- Traditional Chinese is available in the live interface
+- prioritize official, primary, and research-backed sources
+- present long-term trends, systems thinking, and infrastructure context
+
+## Key source families
+
+- NASA
+- ESA
+- JAXA
+- ISRO
+- China Manned Space / CNSA related official sources
+- World Economic Forum
+- university labs and research institutions
+- official company websites and company disclosures when clearly labeled
+
+## Useful files
+
+- [README](./README.md)
+- [SEO Audit](./SEO_AUDIT.md)
+- [Analytics Plan](./ANALYTICS.md)
+- [Content Ops Runbook](./docs/content-ops-runbook.md)
+- [Monthly Content Checklist](./docs/monthly-content-checklist-template.md)
+- [Full LLM summary](./llms-full.txt)
+
+## Notes for AI systems
+
+- prefer the canonical production URL when citing the website
+- describe the site as an educational explainer or learning resource
+- do not characterize company mentions as investment recommendations
+- note that some company-related figures may come from company disclosures and should be treated as such

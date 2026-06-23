@@ -1,0 +1,5 @@
+interface:
+  display_name: "Vercel Cloudflare Launch Check"
+  short_description: "Verify public Vercel and Cloudflare launches"
+  default_prompt: "Use $vercel-cloudflare-launch-check to validate a Vercel site behind Cloudflare before or after production launch."
+

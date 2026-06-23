@@ -1,6 +1,6 @@
 # Analytics Tracking Plan
 
-Last updated: 2026-06-19
+Last updated: 2026-06-20
 
 Tool: Google Analytics 4
 
@@ -50,8 +50,17 @@ GA4 config sends one page view with:
 | `overview_closed` | Mobile Overview bottom sheet closes | `node_id`, `language` |
 | `detail_tab_selected` | User selects Overview, Industry, or Engineering tab | `detail_layer`, `node_id`, `language` |
 | `content_disclosure_opened` | User opens Deep dive or Sources | `disclosure_title`, `node_id`, `detail_layer`, `language` |
+| `card_engaged` | User shows deeper chapter engagement by staying on a node for 10 seconds or opening multiple disclosures | `interaction_type`, `node_id`, `chapter_id`, `node_title`, `engagement_trigger`, `disclosure_count`, `language` |
+| `audio_played` | User starts a narration segment | `audio_action`, `audio_source`, `audio_segment_id`, `audio_segment_title`, `audio_file`, `language` |
+| `audio_paused` | User pauses narration | `audio_action`, `audio_source`, `audio_segment_id`, `audio_segment_title`, `audio_file`, `language` |
+| `audio_resumed` | User resumes narration | `audio_action`, `audio_source`, `audio_segment_id`, `audio_segment_title`, `audio_file`, `language` |
+| `audio_segment_selected` | User changes the audio playlist selection | `audio_action`, `audio_segment_id`, `audio_segment_title`, `audio_file`, `visual_sync`, `language` |
+| `audio_progress` | Narration playback reaches 25%, 50%, or 75% | `audio_action`, `audio_segment_id`, `audio_segment_title`, `audio_file`, `progress_percent`, `language` |
+| `audio_completed` | Narration finishes playback | `audio_action`, `audio_source`, `audio_segment_id`, `audio_segment_title`, `audio_file`, `language` |
+| `audio_error` | Narration playback fails | `audio_action`, `audio_source`, `audio_segment_id`, `audio_segment_title`, `audio_file`, `language` |
 | `about_opened` | User opens About modal | `language` |
 | `about_closed` | User closes About modal | `close_method`, `language` |
+| `about_duration_tracked` | User closes About after a measurable reading interval | `close_method`, `duration_bucket`, `duration_ms`, `language` |
 | `contact_clicked` | User clicks Contact mailto link | `contact_method`, `link_url`, `language` |
 
 `node_selected.interaction_type` values currently include:
@@ -60,6 +69,47 @@ GA4 config sends one page view with:
 - `model_raycast`
 - `desktop_wheel`
 - `mobile_scroll`
+- `audio_playlist`
+
+`card_engaged.engagement_trigger` values currently include:
+
+- `time_10s`
+- `disclosure_depth`
+
+`audio_progress.progress_percent` currently emits:
+
+- `25`
+- `50`
+- `75`
+
+`about_duration_tracked.duration_bucket` currently emits:
+
+- `0_5s`
+- `5_15s`
+- `15s_plus`
+
+## Recommended GA4 Reporting Views
+
+Use these four report groups:
+
+1. Chapter performance
+   - primary metric: `node_selected`
+   - quality metric: `card_engaged`
+   - key dimensions: `node_id`, `interaction_type`, `language`
+
+2. Audio engagement
+   - primary metrics: `audio_played`, `audio_completed`
+   - depth metric: `audio_progress`
+   - key dimensions: `audio_segment_id`, `progress_percent`, `language`
+
+3. About engagement
+   - primary metrics: `about_opened`, `contact_clicked`
+   - depth metric: `about_duration_tracked`
+   - key dimensions: `close_method`, `duration_bucket`, `language`
+
+4. Language behavior
+   - compare `language_selected`, `node_selected`, `card_engaged`, `audio_played`, and `about_opened`
+   - use `language` as the primary comparison dimension
 
 ## Validation
 
